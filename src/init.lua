@@ -1,5 +1,5 @@
 ----* Yanzari Mo Poly
----* Made for GitHub, Together with the Community
+---* Together with the Community
 ---* init.lua: Made to Initialize the Files
 ---* By Yanzari
 
@@ -14,7 +14,29 @@ end
 rawset(_G,"YanzMoPoly",{})
 local YMP = YanzMoPoly
 YMP._Loaded = false
-
+YMP._Version = "v0.1"
+YMP._LoadState = 0
+YMP.Constant = {}
+function YMP.Constant:Add(tbl,pf)
+  for k,v in pairs(tbl)
+  if k and v
+  if YMP.Constant[pf.."_"..string.upper(k)] then return end
+  YMP.Constant[pf.."_"..string.upper(k)] = v
+  end
+  end
+end
+function YMP.Constant:Get(n)
+  if not YMP.Constant[n] then return end
+  return YMP.Constant[n]
+end
+YMP.Constant:Add({
+  ["FIRE"] = BT_ATTACK
+},"BT")
+YMP.Constant:Add({
+  ["Loading"] = 2,
+  ["Loaded"] = 4
+},"YMPIF")
+YMP._LoadState = YMP.Constant:Get("YMPIF_LOADED")
 YMP.Extern = YMP.Extern or {}
 YMP.Extern._Files = YMP.Extern._Files or {}
 local function Alert(txt)
@@ -37,7 +59,7 @@ local function LoadTheFile(path,type)
   Alert("~/lua/"..path.." It is being loaded.")
   if t
     file = loadfile(path)
-    YMP.Extern._Files[t.."-_Yanzari-_-Mo-_-Poly_-"..path] = file
+    YMP.Extern._Files[t.."_-YMP-_"..path] = file
     file()
   else
     return
@@ -85,3 +107,4 @@ end
 
 FileLoad(Files)
 YMP._Loaded = true
+YMP._LoadState = YMP.Constant:Get("YMPIF_LOADED")
