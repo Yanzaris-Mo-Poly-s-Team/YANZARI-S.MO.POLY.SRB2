@@ -1,3 +1,30 @@
+#-----------------------------------------
+#----* Yanzari's Mo Poly: .gitignore *----
+#--*  This is just to make Git ignore  *--
+#--*   these files, since they don't   *--
+#--*    need to be used in the mod.    *--
+#*                                       *
+
+# The ReadMe itself
+README
+
+# GitHub tools
+*.ymp.github.pull-request
+*.ymp.github.issues
+
+# What does the file return
+*.ymp.module-return
+*.ymp.lib-return
+
+# Credits
+*.ymp.credits
+
+# Tools
+*.ymp.tools
+
+# Remove Something Due to Copyright
+*.ymp.copyright
+
 # "To Do" files
 *.ymp.todo
 
