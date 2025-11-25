@@ -7,4 +7,4 @@ Requirements:
 
 • Sonic Robo Blast 2 v2.2.15
   
-This mod cannot be redistributed. Do not use the contents of this mod.
+This mod cannot be redistributed.
