@@ -13,6 +13,7 @@ if YanzMoPoly ~= nil --~ Do you already have a Yanzari's Mo Poly?
 end
 rawset(_G,"YanzMoPoly",{})
 local YMP = YanzMoPoly
+YMP._Loaded = false
 
 YMP.Extern = YMP.Extern or {}
 YMP.Extern._Files = YMP.Extern._Files or {}
@@ -21,15 +22,15 @@ local function Alert(txt)
   return txt
 end
 Alert("Starting File Loading")
-local function LoadTheFiles(path,type)
+local function LoadTheFile(path,type)
   if not type then return end
   local t = nil
   if type == "Script"
     t = "Script"
   elseif type == "Library"
     t = "Library"
-  elseif type == "Modules"
-    t = "Modules"
+  elseif type == "Module"
+    t = "Module"
   end
   if not path then return end
   local file = nil
@@ -45,7 +46,42 @@ local function LoadTheFiles(path,type)
 end
 
 --* Check the Version
---# To Do
+YMP._Is_Debugged_SRB2Version = false
+if VERSION >= 202 and SUBVERSION >= 15
+  Alert("This version is supported.")
+  if debug and debug.getlocal and type(debug.getlocal) == "function"
+    YMP._Is_Debugged_SRB2Version = true
+  end
+else
+  return
+end
 
 --* Load the Files
---# To Do: Separate Script, Module, and Library Files
+local Files = {
+  ["Modules"] = {
+    ["placeholder.lua"] = "Module",
+  }
+  ["Librarys"] = {
+    ["placeholder.lua"] = "Library",
+  }
+  ["Scripts"] = {
+    ["placeholder.lua"] = "Script",
+  }
+}
+local FileLoad = function(tbl)
+for dirname,dirval in pairs(tbl)
+  if dirname and type(dirname) == "string"
+  if dirval and type(dirval) == "table"
+    FileLoad(dirname)
+  elseif dirval and type(dirval) == "string"
+    LoadTheFile(dirname,type)
+  elseif dirval and type(dirval) ~= "string" and type(dirval) ~= "table"
+    Alert("Sorry, you only define tables and strings.")
+    return
+  end
+  end
+end
+end
+
+FileLoad(Files)
+YMP._Loaded = true
