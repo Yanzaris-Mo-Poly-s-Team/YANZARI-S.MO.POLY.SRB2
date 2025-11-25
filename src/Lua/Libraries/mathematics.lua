@@ -26,3 +26,6 @@ end
 Math:FixedACos = function(fixed)
 return acos(fixed/FRACUNIT)*FRACUNIT
 end
+
+----~ returns to itself
+return Math
