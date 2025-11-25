@@ -1,2 +1,10 @@
-# YANZARI-S.MO.POLY.SRB2
-Yanzari Mo Poly, However, it was done in a complex way and together with other people.
+# Yanzari's Mo Poly
+A large and very good mod that will be reworked and made open source.
+
+If you'd like to help, submit a Pull Request.
+
+Requirements:
+
+• Sonic Robo Blast 2 v2.2.15
+  
+This mod cannot be redistributed. Do not use the contents of this mod.
