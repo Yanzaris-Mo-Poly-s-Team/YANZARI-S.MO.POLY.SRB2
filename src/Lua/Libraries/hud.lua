@@ -43,7 +43,7 @@ end
 ----~ Remove a custom HUD.
 --^ returns nil
 Lib:Delete = function(custom,hud)
-if not (huds[hud] and huds[hud][custom]) then return false end
+if not (huds[hud] and huds[hud][custom]) then return end
 huds[hud][custom].enabled = false
 huds[hud][custom] = nil
 end
