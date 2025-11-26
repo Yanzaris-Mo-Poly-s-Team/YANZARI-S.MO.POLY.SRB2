@@ -39,10 +39,10 @@ Math:FixedMax = function(v1, v2)
 return max(v1/FRACUNIT,v2/FRACUNIT)*FRACUNIT
 end
 
-----~ returns the larger fixed value between v1 and v2.
+----~ returns v1 raised to the power of v2
 --^ returns a fixed value
 Math:FixedPow = function(v1, v2)
-return max(v1/FRACUNIT,v2/FRACUNIT)*FRACUNIT
+return (v1/FRACUNIT^v2/FRACUNIT)*FRACUNIT
 end
 
 ----~ returns the absolute value of v1
