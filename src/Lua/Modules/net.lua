@@ -39,10 +39,10 @@ Net[#player].player = player
 ympconf["Netgame"]["Send"].player = player
 if target and target.valid and target.mo and target.mo.valid
 if target.ymp
-if target.ymp[player.skin]
-if target.ymp[player.skin].config
-if target.ymp[player.skin].config[#skins[player.skin]]
-local tympconf = target.ymp[player.skin].config[#skins[player.skin]]
+if target.ymp[target.skin]
+if target.ymp[target.skin].config
+if target.ymp[target.skin].config[#skins[target.skin]]
+local tympconf = target.ymp[target.skin].config[#skins[target.skin]]
 tympconf["Netgame"] = tympconf["Netgame"] or {}
 tympconf["Netgame"]["From "..player.name] = Net[#player]
 tympconf["Netgame"]["From "..player.name].player = player
