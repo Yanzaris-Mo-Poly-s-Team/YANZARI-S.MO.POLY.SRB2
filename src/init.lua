@@ -44,28 +44,6 @@ local function Alert(txt)
   return txt
 end
 Alert("Starting File Loading")
-local function LoadTheFile(path,type)
-  if not type then return end
-  local t = nil
-  if type == "Script"
-    t = "Script"
-  elseif type == "Library"
-    t = "Library"
-  elseif type == "Module"
-    t = "Module"
-  end
-  if not path then return end
-  local file = nil
-  Alert("~/lua/"..path.." It is being loaded.")
-  if t
-    file = loadfile(path)
-    YMP.Extern._Files[t.."_-YMP-_"..path] = file
-    file()
-  else
-    return
-  end
-  return file
-end
 
 --* Check the Version
 YMP._Is_Debugged_SRB2Version = false
@@ -79,32 +57,15 @@ else
 end
 
 --* Load the Files
-local Files = {
-  ["Modules"] = {
-    ["placeholder.lua"] = "Module",
-  }
-  ["Librarys"] = {
-    ["placeholder.lua"] = "Library",
-  }
-  ["Scripts"] = {
-    ["placeholder.lua"] = "Script",
-  }
-}
-local FileLoad = function(tbl)
-for dirname,dirval in pairs(tbl)
-  if dirname and type(dirname) == "string"
-  if dirval and type(dirval) == "table"
-    FileLoad(dirname)
-  elseif dirval and type(dirval) == "string"
-    LoadTheFile(dirname,type)
-  elseif dirval and type(dirval) ~= "string" and type(dirval) ~= "table"
-    Alert("Sorry, you only define tables and strings.")
-    return
-  end
-  end
+local AddFile = function(path)
+local file = loadfile(path)
+YMP.Extern._Files[path] = file
+file()
 end
-end
-
-FileLoad(Files)
+AddFile("Libraries/load.lua")
+AddFile("Libraries/mathematics.lua")
+AddFile("Libraries/hud.lua")
+AddFile("Modules/debug.lua")
+AddFile("Modules/net.lua")
 YMP._Loaded = true
 YMP._LoadState = YMP.Constant:Get("YMPIF_LOADED")
