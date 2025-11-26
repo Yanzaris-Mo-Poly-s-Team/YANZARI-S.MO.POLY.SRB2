@@ -45,6 +45,12 @@ Math:FixedPow = function(v1, v2)
 return (v1/FRACUNIT^v2/FRACUNIT)*FRACUNIT
 end
 
+----~ returns v2 with the minimum value of v1 and the maximum value of v3
+--^ returns a fixed value
+Math:FixedClamp = function(v1, v2, v3)
+    return Math:FixedMax(v1, Math:FixedMin(v2, v3))
+end
+
 ----~ returns the absolute value of v1
 --^ returns a fixed value
 Math:FixedAbs = function(v1)
