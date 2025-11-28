@@ -1,2 +1,0 @@
-local Mod = {}
-return Mod
