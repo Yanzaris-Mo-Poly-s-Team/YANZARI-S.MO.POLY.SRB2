@@ -1,11 +1,14 @@
-MOD_NAME = "SMRFCL_Yanzaris-Mo-Poly"
+# To Do: A Better Makefile
+
+# Settings
+PREFIX = "SMRFCL"
+MOD_NAME = "Yanzaris-Mo-Poly"
 VERSION = "v0.0.1"
-OUTPUT = $(MOD_NAME)_$(VERSION).pk3
-
+OUTPUT = $(PREFIX)_$(MOD_NAME)_$(VERSION).pk3
 SRC_DIR = src
+ZIP_TEMP = Yanzaris_Mo_Poly_Temporary_Zip.zip
 
-ZIP_TEMP = yanzmopoly_temp.zip
-
+# Code
 .PHONY: all clean
 
 all: $(OUTPUT)
