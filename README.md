@@ -68,4 +68,3 @@ Run `make`
 ### Compilation instructions for CMake (Requires CMake 3.10 or above.):
 Run `cmake .`\
 Run `make`
-
