@@ -35,3 +35,21 @@ Status:
     I am really sorry about that. 
 
     —By Yanzari
+
+#Compile
+
+You can use CMake, Make, QMake, or Lua.
+
+###Compilation instructions for Lua:
+Install Lua and LuaRocks
+Run     luarocks install luafilesystem
+Then, Run     lua Build.lua
+
+###Compilation instructions for QMake:
+Run     qmake Build.pro
+
+###Compilation instructions for Make:
+Run     make
+
+###Compilation instructions for CMake (Requires CMake 3.10 or above.):
+Run     cmake
