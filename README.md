@@ -3,8 +3,7 @@ A large and very good mod that will be reworked and made open source.
 
 If you'd like to help, submit a Pull Request.
 
-Requirements:
-
+Requirements:\
 • Sonic Robo Blast 2 v2.2.15
   
 This mod cannot be redistributed.
@@ -36,20 +35,31 @@ Status:
 
     —By Yanzari
 
-#Compile
+---
+
+# Compile
 
 You can use CMake, Make, QMake, or Lua.
 
-###Compilation instructions for Lua:
-Install Lua and LuaRocks
-Run     luarocks install luafilesystem
-Then, Run     lua Build.lua
+---
 
-###Compilation instructions for QMake:
+### Compilation instructions for Lua:
+Install Lua and LuaRocks\
+Run    luarocks install luafilesystem\
+Then, Run    lua Build.lua
+
+---
+
+### Compilation instructions for QMake:
 Run     qmake Build.pro
 
-###Compilation instructions for Make:
+---
+
+### Compilation instructions for Make:
 Run     make
 
-###Compilation instructions for CMake (Requires CMake 3.10 or above.):
-Run     cmake
+---
+
+### Compilation instructions for CMake (Requires CMake 3.10 or above.):
+Run  cmake .\
+Run  make
