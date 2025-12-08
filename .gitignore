@@ -9,31 +9,31 @@
 README
 
 # GitHub tools
-*.ymp.github.pull-request
-*.ymp.github.issues
+*.ymp.github.pull-request # document pull requests
+*.ymp.github.issues # to document issues
 
 # What does the file return
-*.ymp.module-return
-*.ymp.lib-return
+*.ymp.module-return # When a module returns something, this file shows what it returned.
+*.ymp.lib-return # What a library returns: when a library returns something, the file specifies what it is.
 
 # Credits
-*.ymp.credits
+*.ymp.credits # Credits to everyone within the file.
 
 # Tools
-*.ymp.tools
+*.ymp.tools # to document a tool
 
 # Remove Something Due to Copyright
-*.ymp.copyright
+*.ymp.copyright # in case someone wants to remove something because of copyright issues
 
 # "To Do" files
-*.ymp.todo
+*.ymp.todo # to say when something is missing in a given file
 
 # Description files of other files
 *.ymp.desc
-*.ymp.description
+*.ymp.description # Both file extensions are used to describe files.
 
 # Library Configuration files
 *.ymp.lib.config
 *.ymp.library.config
 *.ymp.lib.configuration
-*.ymp.library.configuration
+*.ymp.library.configuration # These four are for configuring libraries.
