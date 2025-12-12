@@ -9,6 +9,81 @@
 --------------------------------------------------------------------------------------------
 --*Start*--*Build.lua*--
 
+--Log
+local function printlog(txt)
+print("Build.lua: "..txt)
+end
+
+--Operating-System--
+--------------------------------------------------------------------------------------------
+
+local Os = {}
+
+local function Os.Detected()
+    local n = package.config:sub(1,1) == "\\" and "Windows" or "Unix-like"
+    
+    if os_name == "Unix-like" then
+        local f = io.open("/system/build.prop", "r")
+        if f then
+            f:close()
+            return "Android"
+        else
+            return "Linux"
+        end
+    end
+    
+    return n
+end
+
+local function Os.Admin(os)
+    local admin = false
+    
+    if os == "Windows" then
+        local cmd = 'reg query "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion" 2>nul'
+        local handle = io.popen(cmd)
+        local result = handle:read("*a")
+        handle:close()
+        admin = result ~= ""
+    elseif os == "Linux" then
+        local handle = io.popen("id -u")
+        local uid = tonumber(handle:read("*a"))
+        handle:close()
+        admin = uid == 0
+    elseif os == "Android" then
+        local cmd = "id -u"
+        local handle = io.popen(cmd)
+        local uid = tonumber(handle:read("*a"))
+        handle:close()
+        admin = uid == 0
+    end
+    
+    return admin
+end
+
+--running-as-super-user--
+--------------------------------------------------------------------------------------------
+
+local Device = Os.Detected()
+local IsAdmin = Os.Admin(Device)
+if IsAdmin
+if Device ~= "Windows"
+printlog("You are running as root.")
+if Device ~= "Linux"
+printlog("Be careful with your guarantee.")
+end
+else
+printlog("You are running as administrator.")
+end
+else
+if Device ~= "Windows"
+printlog("You are not running as root.")
+else
+printlog("You are not running as administrator.")
+end
+end
+
+--------------------------------------------------------------------------------------------
+
 local function saferequire(lib)
 local ok,lib = pcall(require,lib)
 if ok then
@@ -19,8 +94,8 @@ end
 
 local lfs = saferequire("lfs")  --$ This is our only dependency.
 if lfs == nil then
-print("Install the Lua File System on LuaRocks to be able to compile Yanzari Mo Poly using Lua.")
-print("Install using: luarocks install luafilesystem")
+printlog("Install the Lua File System on LuaRocks to be able to compile Yanzari Mo Poly using Lua.")
+printlog("Install using: luarocks install luafilesystem")
 return
 end
 --$ Download the dependency so you can use the script.
@@ -36,10 +111,10 @@ local BUILD_DIR = "build"
 local TEMP_DIR  = BUILD_DIR .. "/temp"
 
 --$ Commands
-local is_windows = package.config:sub(1,1) == '\\'
+local IsWindows = package.config:sub(1,1) == '\\'
 
 local function F_CreateDirectory(path)
-    if is_windows then
+    if IsWindows then
         os.execute(string.format('mkdir "%s" 2>nul', path))
     else
         os.execute(string.format('mkdir -p "%s"', path))
@@ -47,7 +122,7 @@ local function F_CreateDirectory(path)
 end
 
 local function F_RemoveDirectory(path)
-    if is_windows then
+    if IsWindows then
         os.execute(string.format('rmdir /s /q "%s" 2>nul', path))
     else
         os.execute(string.format('rm -rf "%s"', path))
@@ -55,7 +130,7 @@ local function F_RemoveDirectory(path)
 end
 
 local function F_CopyDirectory(src, dest)
-    if is_windows then
+    if IsWindows then
         os.execute(string.format('xcopy "%s" "%s" /E /I /Y >nul', src, dest))
     else
         os.execute(string.format('cp -r "%s" "%s"', src, dest))
@@ -63,7 +138,7 @@ local function F_CopyDirectory(src, dest)
 end
 
 local function F_Echo(msg, color)
-    print(msg)
+    printlog(msg)
 end
 
 local function F_Usage()
@@ -90,7 +165,7 @@ local function F_CreateBuildIdentificationFile(tempdir, build_type)
 end
 
 local function F_CreateZip(tempdir, output)
-    if is_windows then
+    if IsWindows then
         local cmd = string.format(
             'powershell -Command "Compress-Archive -Path \\"%s\\*\\*\\" -DestinationPath \\"%s\\""',
             tempdir, output
