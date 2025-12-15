@@ -1,4 +1,7 @@
 # ヤンザリのモ・ポリ (Yanzari's Mo Poly)
+
+リポジトリは英語ですが、いくつかを日本語に翻訳しました。 (The repository is in English, but I have translated some parts into Japanese.)
+
 A large and very good mod that will be reworked and made open source.
 
 If you'd like to help, submit a Pull Request.
