@@ -3,7 +3,7 @@
 #---*A Build.pro so you can compile the Mod
 #--*It was designed to be used with qmake.
 #--*
-#--*By Yanzari
+#--*By ヤンザリ(Yanzari)
 #--------------------------------------------------------------------------------------------
 #--*Start*--*Build.pro*--
 

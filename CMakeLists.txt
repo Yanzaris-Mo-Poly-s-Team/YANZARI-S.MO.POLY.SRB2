@@ -2,7 +2,7 @@
 #---*CMakeLists.txt
 #--*A CMakeLists.txt file is available for you to compile in CMake.
 #--*
-#--*By Yanzari
+#--*By ヤンザリ(Yanzari)
 #--------------------------------------------------------------------------------------------
 #--*Start*--*CMakeLists.txt*--
 

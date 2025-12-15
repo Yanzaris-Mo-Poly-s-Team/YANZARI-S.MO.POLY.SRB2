@@ -5,7 +5,7 @@
 --* I made this in reference to SRB2.
 --*Usage: lua Build.lua [release|debug|clean|distclean|info]
 --*
---*By Yanzari
+--*By ヤンザリ(Yanzari)
 --------------------------------------------------------------------------------------------
 --*Start*--*Build.lua*--
 

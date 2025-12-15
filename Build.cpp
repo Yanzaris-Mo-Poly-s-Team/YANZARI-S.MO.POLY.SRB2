@@ -1,5 +1,5 @@
 // This C++ script is for compilation, intended only for those who want to compile using the srb2 compilation method, since it uses C/C++. Here we will use C++, so use g++ to compile.
-// Made by Yanzari
+// Made by ヤンザリ(Yanzari)
 #include <iostream>
 #include <fstream>
 #include <string>

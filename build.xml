@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="SMRFCL_Yanzaris-Mo-Poly" default="release" basedir=".">
-
+    <!-- By ヤンザリ(Yanzari) -->
     <!-- Settings -->
     <property name="mod.name" value="SMRFCL_Yanzaris-Mo-Poly"/>
     <property name="version" value="v0.0.1"/>

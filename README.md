@@ -1,4 +1,4 @@
-# Yanzari's Mo Poly
+# ヤンザリのモ・ポリ (Yanzari's Mo Poly)
 A large and very good mod that will be reworked and made open source.
 
 If you'd like to help, submit a Pull Request.
@@ -26,7 +26,7 @@ Status:
 
     I wish you continued good health.
 
-    I will still talk about it in the SRB2     workshop, but 
+    I will still talk about it in the SRB2 workshop, but 
     I won't post anything about the mod. If you want 
     to contribute, wait until the status is okay. 
 
@@ -36,7 +36,7 @@ Status:
 
     I am really sorry about that. 
 
-    —By Yanzari
+    —By ヤンザリ(Yanzari)
 
 ---
 

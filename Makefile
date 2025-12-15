@@ -2,7 +2,7 @@
 #---*Makefile
 #--*A Makefile so you can compile the Mod
 #--*
-#--*By Yanzari
+#--*By ヤンザリ (Yanzari)
 #--------------------------------------------------------------------------------------------
 #--*Start*--*Makefile*--
 
