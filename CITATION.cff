@@ -3,7 +3,8 @@ message: "If you want to make an addon (for me, an addon is: a mod that modifies
 authors:
   - family-names: "ヤンザリ"
     given-names: "Yanzari"
+    orcid: "https://orcid.org/0009-0003-8067-7061"
 title: "ヤンザリのモ・ポリ (Yanzari's Mo Poly)"
-version: "0.0.0"
+version: 0.0.0
 date-released: 2025-12-16
 url: "https://github.com/Yanzaris-Mo-Poly-s-Team/YANZARI-S.MO.POLY.SRB2/"
