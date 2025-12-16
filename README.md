@@ -1,6 +1,6 @@
 # ヤンザリのモ・ポリ (Yanzari's Mo Poly)
 
-![Static Badge](https://img.shields.io/badge/github-repo-blue?style=plastic&logo=github&label=Yanzari's%20Mo%20Poly)
+[![Static Badge](https://img.shields.io/badge/github-repo-blue?style=plastic&logo=github&label=Yanzari's%20Mo%20Poly)](https://github.com/Yanzaris-Mo-Poly-s-Team/YANZARI-S.MO.POLY.SRB2/)
 
 リポジトリは英語ですが、いくつかを日本語に翻訳しました。 (The repository is in English, but I have translated some parts into Japanese.)\
 A large and very good mod that will be reworked and made open source.
