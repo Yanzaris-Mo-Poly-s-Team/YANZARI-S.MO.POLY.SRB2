@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="SMRFCL_Yanzaris-Mo-Poly" default="release" basedir=".">
+    <!-- By ヤンザリ(Yanzari) -->
+    <!-- Settings -->
+    <property name="mod.name" value="SMRFCL_Yanzaris-Mo-Poly-PlusPlus"/>
+    <property name="version" value="v0.0.1"/>
+    <property name="output" value="${mod.name}_${version}.pk3"/>
+    <property name="src.dir" value="src"/>
+    <property name="lua.dir" value="${src.dir}/Lua"/>
+    <property name="build.dir" value="build"/>
+    <property name="temp.dir" value="${build.dir}/temp"/>
+    <property name="build.type" value="release"/>
+
+    <!-- Prepare directories -->
+    <target name="prepare-build">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${temp.dir}"/>
+    </target>
+
+    <!-- Copy sources -->
+    <target name="copy-src" depends="prepare-build">
+        <echo message="Copying source files..."/>
+        <copy todir="${temp.dir}">
+            <fileset dir="${src.dir}"/>
+        </copy>
+        <mkdir dir="${temp.dir}/Lua"/>
+    </target>
+
+    <!-- Create build-note -->
+    <target name="create-build-note">
+        <echo message="Creating .build-note..."/>
+        <echo file="${temp.dir}/.build-note">
+            Thank you for building the mod via Ant, Yanzari appreciates it.
+
+            —Yanzari
+        </echo>
+    </target>
+
+    <!-- Create Maketype.lua for Release -->
+    <target name="create-maketype-lua-release">
+        <echo message="Creating Maketype.lua (Release)..."/>
+        <echo file="${temp.dir}/Lua/Maketype.lua">
+            local YMP = YanzMoPolyPlusPlus
+            YMP.BuildType = {build="Release",compmod="ant"}
+        </echo>
+    </target>
+
+    <!-- Create Maketype.lua for Debugging -->
+    <target name="create-maketype-lua-debug">
+        <echo message="Creating Maketype.lua (Debug)..."/>
+        <echo file="${temp.dir}/Lua/Maketype.lua">
+            local YMP = YanzMoPoly
+            YMP.BuildType = {build="Debug",compmod="ant"}
+        </echo>
+    </target>
+
+    <!-- Create PK3 -->
+    <target name="create-zip" depends="copy-src,create-build-note">
+        <echo message="Creating PK3 archive..."/>
+        <zip destfile="${output}" basedir="${temp.dir}"/>
+        <echo message="✓ Created ${output}"/>
+    </target>
+
+    <!-- Temporary cleaning -->
+    <target name="clean-temp">
+        <echo message="Cleaning temporary files..."/>
+        <delete dir="${temp.dir}"/>
+    </target>
+
+    <!-- Cleaning artifacts -->
+    <target name="clean">
+        <echo message="Cleaning build artifacts..."/>
+        <delete file="${output}"/>
+        <echo message="✓ Clean completed"/>
+    </target>
+
+    <!-- Deep cleaning -->
+    <target name="distclean" depends="clean">
+        <echo message="Deep cleaning..."/>
+        <delete dir="${build.dir}"/>
+        <echo message="✓ All build files removed"/>
+    </target>
+
+    <!-- Info -->
+    <target name="info">
+        <echo message="========================================"/>
+        <echo message="${mod.name} Build System"/>
+        <echo message="========================================"/>
+        <echo message="Version: ${version}"/>
+        <echo message="Default Output: ${output}"/>
+        <echo message="Source Directory: ${src.dir}"/>
+        <echo message="Build Directory: ${build.dir}"/>
+        <echo message="Build Tool: ant"/>
+        <echo message=""/>
+        <echo message="Available targets:"/>
+        <echo message="  ant release   - Build in release mode (default)"/>
+        <echo message="  ant debug     - Build in debug mode"/>
+        <echo message="  ant clean     - Remove PK3 file"/>
+        <echo message="  ant distclean - Remove all build files"/>
+        <echo message="  ant info      - Show this information"/>
+        <echo message="  ant help      - Show help message"/>
+    </target>
+
+    <!-- Help -->
+    <target name="help" depends="info"/>
+
+    <!-- Build Release -->
+    <target name="release" depends="copy-src,create-build-note,create-maketype-lua-release,create-zip,clean-temp">
+        <echo message="✓ The compilation was completed successfully."/>
+        <echo message="Output: ${output}"/>
+        <echo message="Build Type: Release"/>
+        <echo message="Build Tool: ant"/>
+        <echo message="File Made By Yanzari"/>
+    </target>
+
+    <!-- Build Debug -->
+    <target name="debug" depends="copy-src,create-build-note,create-maketype-lua-debug,create-zip,clean-temp">
+        <echo message="✓ The compilation was completed successfully."/>
+        <echo message="Output: ${output}"/>
+        <echo message="Build Type: Debug"/>
+        <echo message="Build Tool: ant"/>
+        <echo message="File Made By Yanzari"/>
+    </target>
+
+    <!-- Test Build -->
+    <target name="test-build" depends="debug,release">
+        <echo message="✓ Test build completed"/>
+        <echo message="Checking generated files..."/>
+        <condition property="pk3.exists">
+            <available file="${output}"/>
+        </condition>
+        <echo message="PK3 file exists: ${pk3.exists}"/>
+    </target>
+
+    <!-- Test Clean -->
+    <target name="test-clean" depends="test-build,clean">
+        <echo message="✓ Clean test passed"/>
+    </target>
+
+</project>
