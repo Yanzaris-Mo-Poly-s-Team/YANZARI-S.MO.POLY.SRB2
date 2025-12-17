@@ -15,7 +15,7 @@ A large and very good mod that will be reworked and made open source.
 		* [What is the purpose of this mod?](#what-is-the-purpose-of-this-mod)
 		* [Will there be a sequel?](#will-there-be-a-sequel)
 		* [Will the mod support other mods?](#will-the-mod-support-other-mods)
-			* [ Will there be a Wiki?](#-will-there-be-a-wiki)
+			* [Will there be a Wiki?](#will-there-be-a-wiki)
 			* [Will it support SRB2VR and SRB2Mobile?](#will-it-support-srb2vr-and-srb2mobile)
 		* [Bugs](#bugs)
 	* [➤ Installation](#-installation)
@@ -85,7 +85,7 @@ The sequel will be... MUCH better.
 ### Will the mod support other mods?
 Yes, full support.
 
-####  Will there be a Wiki?
+#### Will there be a Wiki?
 we will have YWikiPedia,\
 there, there will be documentation of Yanzari's Mo Poly and Yanzari's Mo Poly++.
 
