@@ -5,6 +5,75 @@
 リポジトリは英語ですが、いくつかを日本語に翻訳しました。 (The repository is in English, but I have translated some parts into Japanese.)\
 A large and very good mod that will be reworked and made open source.
 
+---
+## About the Mod
+
+- This mod will be very complex, very cool, and fun;\
+it will have many characters and many DLCs.
+
+### What are your plans for the mod?
+- Characters:\
+ - Sonic from Sonic and the Fallen Star (Credits to StarDrop)\
+ - Tails from Sonic and the Fallen Star (Credits to StarDrop)\
+ - Amy from Sonic and the Moon Facility (Credits to StarDrop)\
+ - Alex from Super Cat Tales 2 (Credits to Neotronized)
+ 
+- Map Themes:\
+ - Super Phantom Cat 2 (Credits to Veewo)\
+ - Super Cat Tales 2 (Credits to Neotronized)\
+ - Sonic and the Fallen Star (Credits to StarDrop)\
+ - Original Maps\
+ - Exclusive DLC Maps
+ 
+### What else do you plan to include in the mod?
+I plan to put a lot of stuff on it, I think the SRB2 will be able to handle it.\
+
+- Custom Character Selection Screen\
+- Customized Credits Screen\
+- Customized Player Setup Screen\
+- Customized Chat\
+- many DLCs\
+- A Command Prompt Instead of the SRB2 Console\
+- Recreating some functions of Lua 5.4\
+- Partitions\
+- Heavy File I/O Encryption!!\
+ - SQLite3, Aes, base64 and others\
+- LoadString (Lua 5.1)\
+- Load (Lua 5.4)\
+- Floating Numbers\
+- Classes\
+- SRB2 Thokker\
+- Menus so you don't have to mess with console variables.\
+- Among many other things that will make your game good.
+
+### What is the purpose of this mod?
+It's a mod that gets stuck in your memory because it's so good,\
+and I also want to know if SRB2 is capable\
+of running complex things.
+
+### Will there be a sequel?
+Yes. It was called "Yanzari's Lost Island"\
+The sequel will be... MUCH better.
+
+### Will the mod support other mods?
+Yes, full support.
+
+####  Will there be a Wiki?
+we will have YWikiPedia,\
+there, there will be documentation of Yanzari's Mo Poly and Yanzari's Mo Poly++.
+
+#### Will it support SRB2VR and SRB2Mobile?
+yes, SRB2VR and SRB2Mobile supported Yanzari's Mo Poly, however...\
+it requires SRB2 2.2.15.
+
+You will need to have the SRB2VR version of SRB2 2.2.15,\
+if it exists; otherwise, you will have to create a version of SRB2VR for SRB2 2.2.15. 
+
+### Bugs
+When you started a multiplayer server and someone joined,\
+it would cause your game to crash.
+ ---
+
 If you'd like to help, submit a Pull Request.
 
 I know that if you have the source code, you'll be able to make add-ons that modify my mod.\
@@ -44,7 +113,7 @@ Status:
 
 ---
 
-# Compile
+## Compile
 
 You can use CMake, Make, QMake, or Lua.
 
