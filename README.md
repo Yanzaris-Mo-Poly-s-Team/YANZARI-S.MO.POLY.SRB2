@@ -12,7 +12,7 @@ A large and very good mod that will be reworked and made open source.
 it will have many characters and many DLCs.
 
 ### What are your plans for the mod?
-- Characters:\
+- Characters:
   - Sonic from Sonic and the Fallen Star (Credits to StarDrop)
   - Tails from Sonic and the Fallen Star (Credits to StarDrop)
   - Amy from Sonic and the Moon Facility (Credits to StarDrop)
@@ -72,6 +72,7 @@ if it exists; otherwise, you will have to create a version of SRB2VR for SRB2 2.
 ### Bugs
 When you started a multiplayer server and someone joined,\
 it would cause your game to crash.
+
  ---
 
 If you'd like to help, submit a Pull Request.
