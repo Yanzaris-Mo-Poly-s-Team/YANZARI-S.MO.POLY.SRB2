@@ -5,6 +5,8 @@
 リポジトリは英語ですが、いくつかを日本語に翻訳しました。 (The repository is in English, but I have translated some parts into Japanese.)\
 A large and very good mod that will be reworked and made open source.
 
+The mod information is from before it was paused; the [status](#-status) is Current.
+
 ---
 ## ➤ Table of Contents
 
