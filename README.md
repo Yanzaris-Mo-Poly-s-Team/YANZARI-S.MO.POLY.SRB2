@@ -1,6 +1,12 @@
 # ➤ ヤンザリのモ・ポリ (Yanzari's Mo Poly)
+**SRB2 2.2.15**
+
+---
+## ➤ Badges
 
 [![Static Badge](https://img.shields.io/badge/github-repo-blue?style=plastic&logo=github&label=Yanzari's%20Mo%20Poly)](https://github.com/Yanzaris-Mo-Poly-s-Team/YANZARI-S.MO.POLY.SRB2/)
+
+---
 
 リポジトリは英語ですが、いくつかを日本語に翻訳しました。 (The repository is in English, but I have translated some parts into Japanese.)\
 A large and very good mod that will be reworked and made open source.
@@ -10,7 +16,8 @@ The mod information is from before it was paused; the [status](#-status) is Curr
 ---
 ## ➤ Table of Contents
 
-* [➤ ヤンザリのモ・ポリ (Yanzari's Mo Poly)](#--yanzaris-mo-poly)
+* [➤ ヤンザリのモ・ポリ (Yanzari's Mo Poly)](#-yanzaris-mo-poly)
+    * [➤ Badges](#-badges)
 	* [➤ About the Mod](#-about-the-mod)
 		* [What are your plans for the mod?](#what-are-your-plans-for-the-mod)
 		* [What else do you plan to include in the mod?](#what-else-do-you-plan-to-include-in-the-mod)
@@ -37,43 +44,52 @@ The mod information is from before it was paused; the [status](#-status) is Curr
 
 ## ➤ About the Mod
 
-- This mod will be very complex, very cool, and fun;
+* This mod will be very complex, very cool, and fun;
 it will have many characters and many DLCs.
 
 ### What are your plans for the mod?
-- Characters:
-  - Sonic from Sonic and the Fallen Star (Credits to StarDrop)
-  - Tails from Sonic and the Fallen Star (Credits to StarDrop)
-  - Amy from Sonic and the Moon Facility (Credits to StarDrop)
-  - Alex from Super Cat Tales 2 (Credits to Neotronized)
+* Characters:
+  * Sonic from Sonic and the Fallen Star (Credits to StarDrop)
+  * Tails from Sonic and the Fallen Star (Credits to StarDrop)
+  * Amy from Sonic and the Moon Facility (Credits to StarDrop)
+  * Alex from Super Cat Tales 2 (Credits to Neotronized)
  
-- Map Themes:
-  - Super Phantom Cat 2 (Credits to Veewo)
-  - Super Cat Tales 2 (Credits to Neotronized)
-  - Sonic and the Fallen Star (Credits to StarDrop)
-  - Original Maps
-  - Exclusive DLC Maps
+* Map Themes:
+  * Super Phantom Cat 2 (Credits to Veewo)
+  * Super Cat Tales 2 (Credits to Neotronized)
+  * Sonic and the Fallen Star (Credits to StarDrop)
+  * Original Maps
+  * Exclusive DLC Maps
  
 ### What else do you plan to include in the mod?
 I plan to put a lot of stuff on it, I think the SRB2 will be able to handle it.
 
-- Custom Character Selection Screen
-- Customized Credits Screen
-- Customized Player Setup Screen
-- Customized Chat
-- many DLCs
-- A Command Prompt Instead of the SRB2 Console
-- Recreating some functions of Lua 5.4
-- Partitions
-- Heavy File I/O Encryption!!
-  - SQLite3, Aes, base64 and others
-- LoadString (Lua 5.1)
-- Load (Lua 5.4)
-- Floating Numbers
-- Classes
-- SRB2 Thokker
-- Menus so you don't have to mess with console variables.
-- Among many other things that will make your game good.
+* Custom Character Selection Screen
+* Customized Credits Screen
+* Customized Player Setup Screen
+* Customized Chat
+* many DLCs
+* A Command Prompt Instead of the SRB2 Console
+* Recreating some functions of Lua 5.4
+* Partitions
+* Heavy File I/O Encryption!!
+  * SQLite3, Aes, base64 and others
+* LoadString (Lua 5.1)
+* Load (Lua 5.4)
+* Floating Numbers
+* Classes
+* SRB2 Thokker
+* Menus so you don't have to mess with console variables.
+* Yanzari's Mo Poly Table (`YanzMoPoly`) will no longer be accessible; only YMKP and YMSP will be available.
+* Yanzari's Modding Kit Poly (YMKP)
+  * ヤンザリの改造キット ポリ
+  * Basically, an SDK (Software Development Kit).
+  * a brief explanation: SDK (Software Development Kit) is a complete set of tools that allows developers to create, test, and integrate applications on a specific platform.
+* Yanzari's Modding Space Poly (YMSP)
+  * ヤンザリのモッディングスペースポリ
+  * This will be a space where you can put functions, variables, constants, classes, hooks, etc. Everything your mod stores must be in this space.
+  * Example to create (if YMKP is implemented): `YMKP:AddSpace(name : string)`
+* Among many other things that will make your game good.
 
 ### What is the purpose of this mod?
 It's a mod that gets stuck in your memory because it's so good,\
@@ -102,7 +118,7 @@ if it exists; otherwise, you will have to create a version of SRB2VR for SRB2 2.
 When you started a multiplayer server and someone joined,\
 it would cause your game to crash.
 
- ---
+---
 
 I know that if you have the source code, you'll be able to make add-ons that modify my mod.\
 (I consider a mod to be a modification and an addon to be a mod that alters another mod.)
