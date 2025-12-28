@@ -114,7 +114,8 @@ I plan to put a **lot of stuff** on it, I think the SRB2 will be able to handle 
 
 ### This shows a bit of scripting for YMKP
 This depends on whether **YMKP is fully added**:\
-  Let's assume that this file is not **init.lua**:\
+  Let's assume that this file is not **init.lua**:
+  
     -- It will probably only work in the final version.
     local Mod = YMKP:AddSpace(spacename : string)
     Mod:Init(function(API)
