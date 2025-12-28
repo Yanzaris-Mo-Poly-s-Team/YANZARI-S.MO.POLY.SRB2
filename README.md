@@ -10,9 +10,10 @@
 リポジトリは英語ですが、いくつかを日本語に翻訳しました。 (The repository is in English, but I have translated some parts into Japanese.)\
 A large and very good mod that will be reworked and made open source.
 
-We accept contributions!!!
+We Accept Contributions Now!
 
-The mod information is from before it was paused; the [status](#-status) is Current.
+The mod information is from before it was paused;\
+the [status](#-status) is Current.
 
 ---
 ## ➤ Table of Contents
@@ -21,9 +22,12 @@ The mod information is from before it was paused; the [status](#-status) is Curr
     * [➤ Badges](#-badges)
 	* [➤ About the Mod](#-about-the-mod)
 		* [What are your plans for the mod?](#what-are-your-plans-for-the-mod)
-		* [How much storage does it consume?](#how-much-storage-does-it-consume)
 		* [What else do you plan to include in the mod?](#what-else-do-you-plan-to-include-in-the-mod)
+		* [This shows a bit of scripting for YMKP](#this_shows_a_bit_of_scripting_for_ymkp)
+		* [Do you care about file security?](#do_you_care_about_file_security)
 		* [What is the purpose of this mod?](#what-is-the-purpose-of-this-mod)
+		* [How much storage does it consume?](#how-much-storage-does-it-consume)
+		* [Which languages are supported?](#which_languages_are_supported)
 		* [Will there be a sequel?](#will-there-be-a-sequel)
 		* [Will the mod support other mods?](#will-the-mod-support-other-mods)
 			* [Will there be a Wiki?](#will-there-be-a-wiki)
@@ -108,9 +112,9 @@ I plan to put a **lot of stuff** on it, I think the SRB2 will be able to handle 
   * Example to create (if YMKP is implemented): `YMKP:AddSpace(name : string)`
 * Among many other things that will make your game good.
 
-### This shows a bit of scripting for YMKP.
+### This shows a bit of scripting for YMKP
 This depends on whether **YMKP is fully added**:\
-  Let's assume that this file is not init.lua:
+  Let's assume that this file is not **init.lua**:
     -- It will probably only work in the final version.
     local Mod = YMKP:AddSpace(spacename : string)
     Mod:Init(function(API)
@@ -180,7 +184,23 @@ This depends on whether **YMKP is fully added**:\
     -- define the Constants and Its Values
     })
     
-    Mod:Hook(hook : string,function(API : userdata,args)
+    Mod:Hud(function(API : userdata)
+      -- Example
+      local Players = API:GetAllHudPlayer()
+      local Player = Players:GetLocalPlayer()
+      local Hud = API:HudAdd(hudtype : string)
+      local HudSpace = Hud:AddItem(name : string)
+      local FRACUNIT = API:GetSRB2Const("FRACUNIT")
+      
+      HudSpace:Draw(x : fracunit,y : fracunit,type : string,text_or_patch : string,color : ymp_skincolor_t,text_align : string : if text,font : string : if text) -- Supports accents on words!!! It also supports emojis!!!🥳
+      --Example1: HudSpace:Draw(1*FRACUNIT,1*FRACUNIT,"String","IShowSpēēd😌",API:GetSkinColor("Yellow"),"Center","PLS_SPEED_I_NEED_THIS")
+      --Example2: HudSpace:Draw(1*FRACUNIT,1*FRACUNIT,"Patch","ISKINDAHOMELESS",API:GetSkinColor("RICKROLL"))
+      API:Enable(item : string)
+      API:Disable(item : string)
+      API:Enabled(item : string)
+    end)
+    
+    Mod:Hook(hook : string,function(API : userdata)
       -- Example
       -- You can only use what the API exposes.
       local Mobjs = API:GetAllMobjs()
@@ -211,7 +231,8 @@ This depends on whether **YMKP is fully added**:\
           if File:Type() == var : string
             -- ...
           end
-          File:Sha256(File:Read("*a"))
+          File:CreateSha1(File:Read("*a"),privatekey : string) -- Creates a Sha1 at the end of the file.
+          File:CheckSha1(start : number, end : number,publickey : string) -- Check the Sha1 to see if there are any inconsistencies.
       end
     end,extra : any : depends)
     
@@ -225,17 +246,37 @@ This depends on whether **YMKP is fully added**:\
     if ExitType == "SRB2"
     elseif ExitType == "Kick"
       local KickReason = API:GetKickReason()
-      if KickReaspn
+      if KickReason == "Ban"
+        local Io = API:GetIO("A1B2C3D4E5F6G7H8I9", name : string : optional) -- Encrypted with AES!
+        local File = nil
+        local Write = nil
+        File = Io:Create(filename : string,mode)
+        Write = File:Write(API:GetServerName()) -- Encrypted with Base64 & ZLib!
       end
     end
     end)
     
-    local GetMySpace = YMKP:GetSpace(spacename : string) -- so you can get your space back.
-    
-When the Mod is fully loaded via init.lua, if you want the Space to be private:
-    YMKP:SetSpacePrivate(spacename : string)
+Get your space back; if you run this while it's private, it returns an error: `local GetMySpace = YMKP:GetSpace(spacename : string)`\
+When the Mod is fully loaded via init.lua, if you want the Space to be private: `YMKP:SetSpacePrivate(spacename : string)`\
+If you want to load the files, we will assume you want to load files using init.lua: `YMKP:LoadFile(path : string)`
 
-Load the Mod via init.lua
+And... For God's sake🛐,\
+don't access or modify the YanzMoPoly table,\
+otherwise you'll get an error:\
+  `Yanzari's Mo Poly Error: Do not access or modify me. I have private things. Please access YMKP instead.`
+  
+Use YMKP and YMSP responsibly\
+if they are implemented.😉
+  
+### Do you care about file security?
+Yes, that's why we use Base64,\
+AES, sha1, and zlib; we don't\
+use only base64 like other modders\
+for security reasons.
+
+Being safe... is good,\
+especially against unwanted\
+and harmful changes.
 
 ### What is the purpose of this mod?
 It's a mod that gets stuck in your memory because it's so good,\
@@ -243,7 +284,16 @@ and I also want to know if **SRB2 is capable**\
 **of running complex things.**
 
 ### How much storage does it consume?
-more than **1GB**.
+more than ~**1GB**.
+
+### Which languages are supported?
+🇧🇷**Portuguese: Brazil** (with Accents in Words),\
+🇵🇹**Portuguese: Portugal** (with Accents in Words),\
+🇺🇲**English**,\
+🇪🇸**Spanish** (with Accents in Words),\
+🇰🇷**Korean** (With Korean Characters),\
+🇯🇵**Japanese** (With Japanese Characters) and\
+🇷🇺**Russian** (With Russian Characters).
 
 ### Will there be a sequel?
 Yes. It was called "**Yanzari's Lost Island**"\
