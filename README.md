@@ -108,6 +108,135 @@ I plan to put a **lot of stuff** on it, I think the SRB2 will be able to handle 
   * Example to create (if YMKP is implemented): `YMKP:AddSpace(name : string)`
 * Among many other things that will make your game good.
 
+### This shows a bit of scripting for YMKP.
+This depends on whether **YMKP is fully added**:\
+  Let's assume that this file is not init.lua:
+    -- It will probably only work in the final version.
+    local Mod = YMKP:AddSpace(spacename : string)
+    Mod:Init(function(API)
+      -- when the Space is Loaded
+      -- Example
+      -- You can only use what the API exposes.
+      local Players = API:GetAllPlayers()
+      local Log = API:GetLog()
+        if Log
+          Log:Print(text : string)
+          local Player = Players:GetLocalPlayer()
+          if (Player and Player:IsValid() and Player:GetMobj() and Player:GetMobj():IsValid()) ~= nil
+            Log:Printf(Player : userdata : ymp_player_t, text : string)
+          end
+        end
+       -- ...
+    end)
+    
+    Mod:SetAttributes({
+    -- Example
+    ["Space"] = "LOL"
+    -- Define the attributes of the Mod...
+    },type : string) -- The type can be YAML, XML, or JSON, Mod:GetAttributes It will return a string in the way the type was defined.
+    
+    Mod:NetVars(function(Net)
+      -- Example
+      Net:Set(var) -- Variables to Synchronize
+    end)
+    
+    Mod:Credits({
+    -- Example
+    "Yanzari",
+    "You",
+    -- other people
+    })
+    
+    Mod:Freeslot({
+    -- Example
+    "MYSPRITE" = "SPRITE",
+    --Freeslot Everything Here, Not Counting SkinColors
+    })   
+    
+    local MySkinColor = Mod:Skincolor(skincolorname : string)
+    -- Example
+    MySkinColor:Set("name",name : string)
+    MySkinColor:Set("colors",colors : table)
+    MySkinColor:Set("Chat Color",chatcolor : string)
+    MySkinColor:Set("Is Super Color?",supercolor : boolean)
+    -- etc
+    MySkinColor:Def() --Turn SkinColor
+    
+    Mod:MobjDef(mobjtype : string,{
+    -- define the attributes
+    })
+    
+    Mod:StateDef(state : string,{
+    -- define the attributes
+    })
+    
+    Mod:SoundDef(sound : string,{
+    -- define the attributes
+    })
+    
+    Mod:AddConstants({
+    -- Example
+    [Const : String] = Value : Any
+    -- define the Constants and Its Values
+    })
+    
+    Mod:Hook(hook : string,function(API : userdata,args)
+      -- Example
+      -- You can only use what the API exposes.
+      local Mobjs = API:GetAllMobjs()
+      local Mobj = Mobjs:GetByType(type : string)
+      local Players = API:GetAllPlayers()
+      local Player = Players:GetLocalPlayer()
+      local SkinName = Player:GetSkinName()
+      local ExpectedSkinName = skinname : string
+      local Skin = API:GetSkinTableByName(Player:GetSkinName())
+      local Const = Mod:GetConstants("Const")
+      if SkinName == ExpectedSkinName
+        local Log = API:GetLog()
+        if Log
+          Log:Print(text : string)
+        end
+        local Io = API:GetIO(privatekey : string, name : string : optional) -- Encrypted with AES!
+        local File = nil
+        local Write = nil
+        local ModLog = Mod:GetMyLog()
+          File = Io:Create(filename : string,mode)
+          Write = File:Write(text : string) -- Encrypted with Base64 & ZLib!
+          if Write:Writed() == true
+            ModLog:Write(text : string)
+          end
+          if File:IsClosed() == true
+            -- ...
+          end
+          if File:Type() == var : string
+            -- ...
+          end
+          File:Sha256(File:Read("*a"))
+      end
+    end,extra : any : depends)
+    
+    local filename = Mod:Require(filename : string) -- returns an addonfile_t or nil
+    local filename = Mod:Include(filename : string) -- returns an addonfile_t or error
+    
+    Mod:Exit(function(API)
+    -- When the game performs an action considered to be closed
+    -- an example
+    local ExitType = API:GetExitType()
+    if ExitType == "SRB2"
+    elseif ExitType == "Kick"
+      local KickReason = API:GetKickReason()
+      if KickReaspn
+      end
+    end
+    end)
+    
+    local GetMySpace = YMKP:GetSpace(spacename : string) -- so you can get your space back.
+    
+When the Mod is fully loaded via init.lua, if you want the Space to be private:
+    YMKP:SetSpacePrivate(spacename : string)
+
+Load the Mod via init.lua
+
 ### What is the purpose of this mod?
 It's a mod that gets stuck in your memory because it's so good,\
 and I also want to know if **SRB2 is capable**\
