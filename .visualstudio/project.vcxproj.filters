@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <ItemGroup>
+    <Filter Include="SRB2 Riders">
+      <UniqueIdentifier>{B15EC285-9C85-4A8D-8720-DE40F6B1E96D}</UniqueIdentifier>
+    </Filter>
+
+    <Filter Include="Yanzari's Mo Poly Folder">
+      <UniqueIdentifier>{5F06D984-FEB9-4F61-AD85-CA7D59B013C2}</UniqueIdentifier>
+    </Filter>
+
+    <Filter Include="Yanzari's Mo Poly">
+      <UniqueIdentifier>{3E8B2D1A-47DD-4C53-B30A-FA9D35CE2B74}</UniqueIdentifier>
+    </Filter>
+
+    <Filter Include="Yanzari's Mo Poly DLC: Example">
+      <UniqueIdentifier>{A1FBE90C-2DBF-4E79-966C-B16E95F38B52}</UniqueIdentifier>
+    </Filter>
+
+    <Filter Include="Yanzari's Mo Poly++ Folder">
+      <UniqueIdentifier>{7D3C9A2F-8A11-4C50-86F4-DC493B7174E1}</UniqueIdentifier>
+    </Filter>
+
+    <Filter Include="Yanzari's Mo Poly++">
+      <UniqueIdentifier>{E4C17F8F-5AD5-4D94-93C0-7F2B8E0C54A3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\SRB2 2.2 Riders (Revival)\**\*.*">
+      <Filter>SRB2 Riders</Filter>
+    </None>
+
+    <None Include="..\Yanzari's Mo Poly\**\*.*">
+      <Filter>Yanzari's Mo Poly Folder</Filter>
+    </None>
+
+    <None Include="..\Yanzari's Mo Poly\Default\src\**\*.*">
+      <Filter>Yanzari's Mo Poly</Filter>
+    </None>
+
+    <None Include="..\Yanzari's Mo Poly\DLCS\DLC.Example\src\**\*.*">
+      <Filter>Yanzari's Mo Poly DLC: Example</Filter>
+    </None>
+
+    <None Include="..\Yanzari's Mo Poly++\**\*.*">
+      <Filter>Yanzari's Mo Poly++ Folder</Filter>
+    </None>
+
+    <None Include="..\Yanzari's Mo Poly++\src\**\*.*">
+      <Filter>Yanzari's Mo Poly++</Filter>
+    </None>
+  </ItemGroup>
+
+</Project>

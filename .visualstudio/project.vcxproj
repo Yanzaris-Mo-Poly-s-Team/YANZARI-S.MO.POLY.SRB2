@@ -1,0 +1,70 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debugable|x64">
+      <Configuration>Debugable</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Allow_Bytecode_Debugavel|x64">
+      <Configuration>Allow_Bytecode_Debugavel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{6C626BD4-B99F-4EA0-B5C4-3C99C1985D31}</ProjectGuid>
+    <Keyword>MakeFileProj</Keyword>
+    <ProjectName>"Yanzari's Mo Poly Repository"</ProjectName>
+  </PropertyGroup>
+
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+
+  <!-- Configuração Debug -->
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <BuildCommandLine>echo Debug build not required for Lua scripts</BuildCommandLine>
+  </PropertyGroup>
+
+  <!-- Configuração Release -->
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <BuildCommandLine>echo Release build not required for Lua scripts</BuildCommandLine>
+  </PropertyGroup>
+
+  <!-- Configuração Debugable -->
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debugable|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <BuildCommandLine>echo Debugable mode: no compilation needed</BuildCommandLine>
+  </PropertyGroup>
+
+  <!-- Configuração Allow_Bytecode_Debugavel -->
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Allow_Bytecode_Debugavel|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <BuildCommandLine>echo Bytecode debug mode: no compilation needed</BuildCommandLine>
+  </PropertyGroup>
+
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+
+  <ItemGroup>
+    <None Include="..\Yanzari's Mo Poly\**\*" />
+    <None Include="..\Yanzari's Mo Poly++\**\*" />
+    <None Include="..\SRB2 2.2 Riders (Revival)\**\*" />
+  </ItemGroup>
+
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

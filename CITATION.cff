@@ -1,5 +1,6 @@
 cff-version: 1.2.0
 message: "If you want to make an addon (for me, an addon is: a mod that modifies another mod) for this mod, please cite us as shown below."
+type: generic
 authors:
   - family-names: "ヤンザリ"
     given-names: "Yanzari"

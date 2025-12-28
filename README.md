@@ -1,5 +1,4 @@
 # ➤ ヤンザリのモ・ポリ (Yanzari's Mo Poly)
-**SRB2 2.2.15**
 
 ---
 ## ➤ Badges
@@ -11,6 +10,8 @@
 リポジトリは英語ですが、いくつかを日本語に翻訳しました。 (The repository is in English, but I have translated some parts into Japanese.)\
 A large and very good mod that will be reworked and made open source.
 
+We accept contributions!!!
+
 The mod information is from before it was paused; the [status](#-status) is Current.
 
 ---
@@ -20,6 +21,7 @@ The mod information is from before it was paused; the [status](#-status) is Curr
     * [➤ Badges](#-badges)
 	* [➤ About the Mod](#-about-the-mod)
 		* [What are your plans for the mod?](#what-are-your-plans-for-the-mod)
+		* [How much storage does it consume?](#how-much-storage-does-it-consume)
 		* [What else do you plan to include in the mod?](#what-else-do-you-plan-to-include-in-the-mod)
 		* [What is the purpose of this mod?](#what-is-the-purpose-of-this-mod)
 		* [Will there be a sequel?](#will-there-be-a-sequel)
@@ -60,9 +62,24 @@ it will have many characters and many DLCs.
   * Sonic and the Fallen Star (Credits to StarDrop)
   * Original Maps
   * Exclusive DLC Maps
+
+* Hud
+  * Themed Super Cat Tales 2 (Credits to Neotronized)
+  * Themed Sonic and the Fallen Star (Credits to StarDrop)
+  * Menus
+    * Themed around Sonic and the Fallen Star and Super Cat Tales, with some original content.
+    
+* Sounds & Musics
+  * Themes from Super Cat Tales 2, Sonic and the Fallen Star, etc.
+  
+* SRB2 Lua Scripts
+  * All scripts were created by me and perhaps by others.
+  * I will review the scripts you submit for your contributions.
+    * If everything is alright, I will accept.
+    * If everything isn't alright, I won't accept it.
  
 ### What else do you plan to include in the mod?
-I plan to put a lot of stuff on it, I think the SRB2 will be able to handle it.
+I plan to put a **lot of stuff** on it, I think the SRB2 will be able to handle it.
 
 * Custom Character Selection Screen
 * Customized Credits Screen
@@ -93,22 +110,25 @@ I plan to put a lot of stuff on it, I think the SRB2 will be able to handle it.
 
 ### What is the purpose of this mod?
 It's a mod that gets stuck in your memory because it's so good,\
-and I also want to know if SRB2 is capable\
-of running complex things.
+and I also want to know if **SRB2 is capable**\
+**of running complex things.**
+
+### How much storage does it consume?
+more than **1GB**.
 
 ### Will there be a sequel?
-Yes. It was called "Yanzari's Lost Island"\
+Yes. It was called "**Yanzari's Lost Island**"\
 The sequel will be... MUCH better.
 
 ### Will the mod support other mods?
-Yes, full support.
+**Yes**, full support.
 
 #### Will there be a Wiki?
-we will have YWikiPedia,\
+we will have **YWikiPedia**,\
 there, there will be documentation of Yanzari's Mo Poly and Yanzari's Mo Poly++.
 
 #### Will it support SRB2VR and SRB2Mobile?
-yes, SRB2VR and SRB2Mobile supported Yanzari's Mo Poly, however...\
+**yes**, SRB2VR and SRB2Mobile supported Yanzari's Mo Poly, however...\
 it requires SRB2 2.2.15.
 
 You will need to have the SRB2VR version of SRB2 2.2.15,\
