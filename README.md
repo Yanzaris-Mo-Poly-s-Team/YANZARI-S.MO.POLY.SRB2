@@ -21,6 +21,9 @@ the [status](#-status) is Current.
 * [➤ ヤンザリのモ・ポリ (Yanzari's Mo Poly)](#-yanzaris-mo-poly)
     * [➤ Badges](#-badges)
 	* [➤ About the Mod](#-about-the-mod)
+	    * [What does Yanzari's Mo Poly mean?](#what-does-yanzaris-mo-poly-mean)
+	    * [Does it have to do with polygons or high-fidelity sprites?](#does-it-have-to-do-with-polygons-or-high-fidelity-sprites)
+	    * [Is it a modification of the SRB2 source code? The term "Mod" can also mean that.](#is-it-a-modification-of-the-SRB2-source-code-The-term-Mod-can-also-mean-that)
 		* [What are your plans for the mod?](#what-are-your-plans-for-the-mod)
 		* [What else do you plan to include in the mod?](#what-else-do-you-plan-to-include-in-the-mod)
 		* [This shows a bit of scripting for YMKP](#this_shows_a_bit_of_scripting_for_ymkp)
@@ -40,6 +43,7 @@ the [status](#-status) is Current.
 	* [➤ Status](#-status)
 	* [➤ Compile](#-compile)
 		* [Compilation instructions for Lua:](#compilation-instructions-for-lua)
+		* [Compilation instructions for Cpp:](#compilation-instructions-for-Cpp)
 		* [Compilation instructions for QMake:](#compilation-instructions-for-qmake)
 		* [Compilation instructions for Make:](#compilation-instructions-for-make)
 		* [Compilation instructions for CMake (Requires CMake 3.10 or above.):](#compilation-instructions-for-cmake-requires-cmake-310-or-above)
@@ -52,6 +56,20 @@ the [status](#-status) is Current.
 
 * This mod will be very complex, very cool, and fun;
 it will have many characters and many DLCs.
+
+### What does Yanzari's Mo Poly mean?
+  Yanzari is the creator/one of the creators of the mod.\
+  Mo means Mod.\
+  Poly doesn't mean polygons,\
+  Poly has no meaning.
+
+### Does it have to do with polygons or high-fidelity sprites?
+  No, it has nothing to do with polygons or high-fidelity sprites.\
+  He uses real assets.
+
+### Is it a modification of the SRB2 source code? The term "Mod" can also mean that.
+  It is not a modification of the srb2 source code.\
+  It uses .pk3, an srb2 format specifically for Mods.
 
 ### What are your plans for the mod?
 * Characters:
@@ -90,172 +108,171 @@ I plan to put a **lot of stuff** on it, I think the SRB2 will be able to handle 
 * Customized Player Setup Screen
 * Customized Chat
 * many DLCs
-* A Command Prompt Instead of the SRB2 Console
+* A Command Prompt (using `open_ymp-console`)
 * Recreating some functions of Lua 5.4
-* Partitions
-* Heavy File I/O Encryption!!
-  * SQLite3, Aes, base64 and others
-* LoadString (Lua 5.1)
-* Load (Lua 5.4)
-* Floating Numbers
+* Protected Input/Output (I/O)
+  * Passwords: SHA3
+  * Encrypted: AES256
 * Classes
-* SRB2 Thokker
+* A DLC for Yanzari's Mo Poly for compatibility with SRB2 Thokker (the port of SRB2 Thokker to 2.2).
 * Menus so you don't have to mess with console variables.
 * Yanzari's Mo Poly Table (`YanzMoPoly`) will no longer be accessible; only YMKP and YMSP will be available.
 * Yanzari's Modding Kit Poly (YMKP)
   * ヤンザリの改造キット ポリ
   * Basically, an SDK (Software Development Kit).
+  * In this case, it's an MDK (Mod Development Kit).
   * a brief explanation: SDK (Software Development Kit) is a complete set of tools that allows developers to create, test, and integrate applications on a specific platform.
 * Yanzari's Modding Space Poly (YMSP)
   * ヤンザリのモッディングスペースポリ
   * This will be a space where you can put functions, variables, constants, classes, hooks, etc. Everything your mod stores must be in this space.
-  * Example to create (if YMKP is implemented): `YMKP:AddSpace(name : string)`
+  * Example to create: `YMKP:AddSpace(name : string)`
+* Support for characters from other mods.
 * Among many other things that will make your game good.
 
 ### This shows a bit of scripting for YMKP
 This depends on whether **YMKP is fully added**:\
   Let's assume that this file is not **init.lua**:
-  
-    -- It will probably only work in the final version.
-    local Mod = YMKP:AddSpace(spacename : string)
-    Mod:Init(function(API)
-      -- when the Space is Loaded
-      -- Example
-      -- You can only use what the API exposes.
-      local Players = API:GetAllPlayers()
-      local Log = API:GetLog()
-        if Log
-          Log:Print(text : string)
-          local Player = Players:GetLocalPlayer()
-          if (Player and Player:IsValid() and Player:GetMobj() and Player:GetMobj():IsValid()) ~= nil
-            Log:Printf(Player : userdata : ymp_player_t, text : string)
-          end
-        end
-       -- ...
-    end)
-    
-    Mod:SetAttributes({
-    -- Example
-    ["Space"] = "LOL"
-    -- Define the attributes of the Mod...
-    },type : string) -- The type can be YAML, XML, or JSON, Mod:GetAttributes It will return a string in the way the type was defined.
-    
-    Mod:NetVars(function(Net)
-      -- Example
-      Net:Set(var) -- Variables to Synchronize
-    end)
-    
-    Mod:Credits({
-    -- Example
-    "Yanzari",
-    "You",
-    -- other people
-    })
-    
-    Mod:Freeslot({
-    -- Example
-    "MYSPRITE" = "SPRITE",
-    --Freeslot Everything Here, Not Counting SkinColors
-    })   
-    
-    local MySkinColor = Mod:Skincolor(skincolorname : string)
-    -- Example
-    MySkinColor:Set("name",name : string)
-    MySkinColor:Set("colors",colors : table)
-    MySkinColor:Set("Chat Color",chatcolor : string)
-    MySkinColor:Set("Is Super Color?",supercolor : boolean)
-    -- etc
-    MySkinColor:Def() --Turn SkinColor
-    
-    Mod:MobjDef(mobjtype : string,{
-    -- define the attributes
-    })
-    
-    Mod:StateDef(state : string,{
-    -- define the attributes
-    })
-    
-    Mod:SoundDef(sound : string,{
-    -- define the attributes
-    })
-    
-    Mod:AddConstants({
-    -- Example
-    [Const : String] = Value : Any
-    -- define the Constants and Its Values
-    })
-    
-    Mod:Hud(function(API : userdata)
-      -- Example
-      local Players = API:GetAllHudPlayer()
+```lua
+-- It will probably only work in the final version.
+local Mod = YMKP:AddSpace(spacename : string)
+  Mod:Init(function(API)
+  -- when the Space is Loaded
+  -- Example
+  -- You can only use what the API exposes.
+  local Players = API:GetAllPlayers()
+  local Log = API:GetLog()
+    if Log
+      Log:Print(text : string)
       local Player = Players:GetLocalPlayer()
-      local Hud = API:HudAdd(hudtype : string)
-      local HudSpace = Hud:AddItem(name : string)
-      local FRACUNIT = API:GetSRB2Const("FRACUNIT")
-      
-      HudSpace:Draw(x : fracunit,y : fracunit,type : string,text_or_patch : string,color : ymp_skincolor_t,text_align : string : if text,font : string : if text) -- Supports accents on words!!! It also supports emojis!!!🥳
-      --Example1: HudSpace:Draw(1*FRACUNIT,1*FRACUNIT,"String","IShowSpēēd😌",API:GetSkinColor("Yellow"),"Center","PLS_SPEED_I_NEED_THIS")
-      --Example2: HudSpace:Draw(1*FRACUNIT,1*FRACUNIT,"Patch","ISKINDAHOMELESS",API:GetSkinColor("RICKROLL"))
-      API:Enable(item : string)
-      API:Disable(item : string)
-      API:Enabled(item : string)
-    end)
-    
-    Mod:Hook(hook : string,function(API : userdata)
-      -- Example
-      -- You can only use what the API exposes.
-      local Mobjs = API:GetAllMobjs()
-      local Mobj = Mobjs:GetByType(type : string)
-      local Players = API:GetAllPlayers()
-      local Player = Players:GetLocalPlayer()
-      local SkinName = Player:GetSkinName()
-      local ExpectedSkinName = skinname : string
-      local Skin = API:GetSkinTableByName(Player:GetSkinName())
-      local Const = Mod:GetConstants("Const")
-      if SkinName == ExpectedSkinName
-        local Log = API:GetLog()
-        if Log
-          Log:Print(text : string)
-        end
-        local Io = API:GetIO(privatekey : string, name : string : optional) -- Encrypted with AES!
-        local File = nil
-        local Write = nil
-        local ModLog = Mod:GetMyLog()
-          File = Io:Create(filename : string,mode)
-          Write = File:Write(text : string) -- Encrypted with Base64 & ZLib!
-          if Write:Writed() == true
-            ModLog:Write(text : string)
-          end
-          if File:IsClosed() == true
-            -- ...
-          end
-          if File:Type() == var : string
-            -- ...
-          end
-          File:CreateSha1(File:Read("*a"),privatekey : string) -- Creates a Sha1 at the end of the file.
-          File:CheckSha1(start : number, end : number,publickey : string) -- Check the Sha1 to see if there are any inconsistencies.
-      end
-    end,extra : any : depends)
-    
-    local filename = Mod:Require(filename : string) -- returns an addonfile_t or nil
-    local filename = Mod:Include(filename : string) -- returns an addonfile_t or error
-    
-    Mod:Exit(function(API)
-    -- When the game performs an action considered to be closed
-    -- an example
-    local ExitType = API:GetExitType()
-    if ExitType == "SRB2"
-    elseif ExitType == "Kick"
-      local KickReason = API:GetKickReason()
-      if KickReason == "Ban"
-        local Io = API:GetIO("A1B2C3D4E5F6G7H8I9", name : string : optional) -- Encrypted with AES!
-        local File = nil
-        local Write = nil
-        File = Io:Create(filename : string,mode)
-        Write = File:Write(API:GetServerName()) -- Encrypted with Base64 & ZLib!
+      if (Player and Player:IsValid() and Player:GetMobj() and Player:GetMobj():IsValid()) ~= nil
+        Log:Printf(Player : userdata : ymp_player_t, text : string)
       end
     end
-    end)
+   -- ...
+end)
+
+Mod:SetAttributes({
+-- Example
+  ["Space"] = "LOL"
+-- Define the attributes of the Mod...
+},type : string) -- The type can be YAML, XML, or JSON, Mod:GetAttributes It will return a string in the way the type was defined.
+
+Mod:NetVars(function(Net)
+  -- Example
+  Net:Set(var) -- Variables to Synchronize
+end)
+
+Mod:Credits({
+  -- Example
+  "Yanzari",
+  "You",
+  -- other people
+})
+
+Mod:Freeslot({
+  -- Example
+  "MYSPRITE" = "SPRITE",
+  --Freeslot Everything Here, Not Counting SkinColors
+})   
+
+local MySkinColor = Mod:Skincolor(skincolorname : string)
+-- Example
+MySkinColor:Set("name",name : string)
+MySkinColor:Set("colors",colors : table)
+MySkinColor:Set("Chat Color",chatcolor : string)
+MySkinColor:Set("Is Super Color?",supercolor : boolean)
+-- etc
+MySkinColor:Def() --Turn SkinColor
+
+Mod:MobjDef(mobjtype : string,{
+  -- Put the names as a string here.
+})
+
+Mod:StateDef(state : string,{
+  -- Put the names as a string here.
+})
+
+Mod:SoundDef(sound : string,{
+  -- Put the names as a string here.
+})
+    
+Mod:AddConstants({
+  -- Example
+  [Const : String] = Value : Any
+  -- define the Constants and Its Values
+})
+
+Mod:Hud(function(API : userdata)
+  -- Example
+  local Players = API:GetAllHudPlayer()
+  local Player = Players:GetLocalPlayer()
+  local Hud = API:AddHud(hudname : string,hudtype : string)
+  local FRACUNIT = API:GetSRB2Const("FRACUNIT")
+      
+  Hud:Draw(x : fracunit,y : fracunit,type : string,text_or_patch : string,color : ymp_skincolor_t,text_align : string : if text,font : string : if text) -- Supports accents on words!!! It also supports emojis!!!🥳
+    --Example1: HudSpace:Draw(1*FRACUNIT,1*FRACUNIT,"String","IShowSpēēd😌",API:GetSkinColor("Yellow"),"Center","PLS_SPEED_I_NEED_THIS")
+    --Example2: HudSpace:Draw(1*FRACUNIT,1*FRACUNIT,"Patch","ISKINDAHOMELESS",API:GetSkinColor("RICKROLL"))
+    API:Enable(item : string)
+    API:Disable(item : string)
+    API:Enabled(item : string)
+  end)
+    
+Mod:Hook(hook : string,function(API : userdata)
+  -- Example
+  -- You can only use what the API exposes.
+  local Mobjs = API:GetAllMobjs()
+  local Mobj = Mobjs:GetByType(type : string)
+  local Players = API:GetAllPlayers()
+  local Player = Players:GetLocalPlayer()
+  local SkinName = Player:GetSkinName()
+  local ExpectedSkinName = skinname : string
+  local Skin = API:GetSkinTableByName(Player:GetSkinName())
+  local Const = Mod:GetConstants("Const")
+  if SkinName == ExpectedSkinName then
+    local Log = API:GetLog()
+    if Log
+      Log:Print(text : string)
+    end
+    local Io = API:GetIO(privatekey : string, name : string : optional) -- Encrypted with AES!
+    local File = nil
+    local Write = nil
+    local ModLog = Mod:GetMyLog()
+    if File then
+      File = Io:Create(filename : string,mode)
+      Write = File:Write(text : string) -- Encrypted with Base64 & ZLib!
+      if Write:Writed() == true
+        ModLog:Write(text : string)
+      end
+      if File:IsClosed() == true
+        -- ...
+      end
+      if File:Type() == var : string
+        -- ...
+      end
+      File:CreateSha1(File:Read("*a"),privatekey : string) -- Creates a Sha1 at the end of the file.
+      File:CheckSha1(start : number, end : number,publickey : string) -- Check the Sha1 to see if there are any inconsistencies.
+    end
+  end
+end,extra : any : depends)
+-- I think modules can be exported, but in a different way.
+    
+Mod:Exit(function(API)
+  -- When the game performs an action considered to be closed
+  -- an example
+  local ExitType = API:GetExitType()
+  if ExitType == "SRB2"
+  elseif ExitType == "Kick"
+    local KickReason = API:GetKickReason()
+    if KickReason == "Ban"
+      local Io = API:GetIO("A1B2C3D4E5F6G7H8I9", name : string : optional) -- Encrypted with AES!
+      local File = nil
+      local Write = nil
+      File = Io:Create(filename : string,mode)
+      Write = File:Write(API:GetServerName()) -- Encrypted with Base64 & ZLib!
+    end
+  end
+end)
+```
     
 Get your space back; if you run this while it's private, it returns an error: `local GetMySpace = YMKP:GetSpace(spacename : string)`\
 When the Mod is fully loaded via init.lua, if you want the Space to be private: `YMKP:SetSpacePrivate(spacename : string)`\
@@ -304,8 +321,10 @@ The sequel will be... MUCH better.
 **Yes**, full support.
 
 #### Will there be a Wiki?
-we will have **YWikiPedia**,\
-there, there will be documentation of Yanzari's Mo Poly and Yanzari's Mo Poly++.
+I mean... we already have the wiki, it's already being made...\
+or it's already finished, depending on when you've been looking at the wiki.
+
+At the time I am reviewing this, it is still being done.
 
 #### Will it support SRB2VR and SRB2Mobile?
 **yes**, SRB2VR and SRB2Mobile supported Yanzari's Mo Poly, however...\
@@ -324,7 +343,8 @@ I know that if you have the source code, you'll be able to make add-ons that mod
 (I consider a mod to be a modification and an addon to be a mod that alters another mod.)
 
 Requirements:\
-• Sonic Robo Blast 2 v2.2.15
+* Sonic Robo Blast 2 v2.2.15
+* a compiler
   
 This mod cannot be redistributed Unofficially, parts of the project may be distributed, but not the entire mod.
 
@@ -374,11 +394,14 @@ Then, run other mods if you want.
 [![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/colored.png)](#status)
 
 ## ➤ Status
-
-    The Mod has been recovered, the Mod will be 
-    uploaded to GitHub in an instant.
-
-    —By ヤンザリ(Yanzari)
+> It was lost, but there's a backup.
+> HOWEVER... the backup is a VERY early version of Yanzari's Mo Poly.
+> And the computer malfunctioned again.
+>
+> Wait for the computer to come back to life and for everything to return-
+> to how it was before.
+>
+>   —By ヤンザリ(Yanzari)
 
 ---
 
@@ -387,7 +410,7 @@ Then, run other mods if you want.
 
 ## ➤ Compile
 
-You can use CMake, Make, QMake, or Lua.
+You can use CMake, Make, QMake, Lua and C++.
 
 Before following the instructions, open the command prompt (cmd). Now that you have opened the command prompt (cmd), execute the instructions.
 
@@ -397,6 +420,13 @@ Before following the instructions, open the command prompt (cmd). Now that you h
 Install Lua and LuaRocks\
 Run `luarocks install luafilesystem`\
 Then, Run `lua Build.lua`
+
+---
+
+### Compilation instructions for Cpp:
+Run `g++ Build.cpp`\
+If you don't have `g++`,\
+use another method that runs C++ scripts.
 
 ---
 
@@ -415,3 +445,16 @@ Run `cmake .`\
 Run `make`
 
 ---
+> This is not official from SEGA, Sonic Team, or Sonic Team Jr.
+> This mod includes SEGA assets.
+> This mod includes SRB2 assets.
+>
+> We are not part of Sonic Team Jr, Sonic Team, or SEJA, nor are we affiliated with them.
+> We are not affiliated with: Neotronized and Veewo.
+>
+> The DLCs are free, you don't pay for them.
+>
+> This mod is free and has no paid features.
+> This mod is not and never will be paid.
+>
+> —By ヤンザリ(Yanzari)
