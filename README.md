@@ -65,7 +65,7 @@ it will have many characters and many DLCs.
 
 ### Does it have to do with polygons or high-fidelity sprites?
   No, it has nothing to do with polygons or high-fidelity sprites.\
-  He uses real assets.
+  He uses assets from other games, such as Super Phantom Cat 2, and also uses some of his own.
 
 ### Is it a modification of the SRB2 source code? The term "Mod" can also mean that.
   It is not a modification of the srb2 source code.\
