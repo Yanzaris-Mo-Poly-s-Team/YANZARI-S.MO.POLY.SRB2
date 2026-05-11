@@ -1,4 +1,9 @@
---!# lua 5.1
+/*
+             Yanzari's Mo Poly
+                -By Yanzari
+-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-
+init.lua
+*/
 
 local unpack = table.unpack or unpack
 local function pack(...)
@@ -107,8 +112,6 @@ local function try_load(path)
 	return chunk, err or berr
 end
 
-local MyNewGlobalEnv = dofile("freeslot.lua")
-
 local function require(path)
     if not path:match("%.lua$") then
         path = path .. ".lua"
@@ -162,7 +165,7 @@ local function require(path)
     local env = setmetatable({
         require = require,
 		package = {loaded = ModuleCache,loadedfunc = function() return FuncModuleCache end,now = function() return CurrentLoadedPath end,this = full_path}
-    }, {__index = MyNewGlobalEnv})
+    }, {__index = _G})
     setfenv(chunk, env)
 	
     Logger:Log("+", "loading \"" .. full_path .. "\"!")
