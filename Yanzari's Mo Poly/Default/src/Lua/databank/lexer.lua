@@ -198,17 +198,14 @@ end
 function Lexer:Emit(tk,arg1,arg2)
 	local token = Tokens[tk]
 	if tk == "TK_KEYWORD" then
-		print("keyword: "..arg1)
 		local keywordname = "TK_"..string.upper(arg1)
 		table.insert(self.tokens,{token=token,keyword=KeyWordsTokens[keywordname],text=arg2})
 		return
 	end
 	if arg1 ~= nil then
-		print("arg1")
 		table.insert(self.tokens,{token=token,text=arg1})
 		return
 	end
-	print("only token")
 	table.insert(self.tokens,{token=token})
 	return
 end
