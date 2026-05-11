@@ -1,0 +1,16 @@
+name = TailsSATFS
+realname = FallenStarsTails
+hudname = Tails
+ability = CA_FLY
+ability2 = CA2_GUNSLINGER
+actionspd = 100
+normalspeed = 36
+thrustfactor = 5
+accelstart = 96
+acceleration = 40
+prefcolor = Orange Lize
+prefoppositecolor = Azure Lize
+flags = SF_RUNONWATER|SF_DASHMODE
+followitem = MT_SATFSTAILSOVERLAY
+spinitem = MT_THOK
+revitem = MT_CORK
