@@ -177,7 +177,6 @@ local Tokens = {
 	["TK_COMMA"] = 14,
 	["TK_COMMAND"] = 15 -- new
 }
-print(tostring(Tokens))
 function Lexer.New(str)
 	if not (str ~= ""
 	and str ~= nil
