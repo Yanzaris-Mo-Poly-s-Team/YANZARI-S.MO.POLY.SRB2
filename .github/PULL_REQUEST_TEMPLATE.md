@@ -1,0 +1,49 @@
+## 📃Description
+
+Provide a detailed description of the PR. (Be clear.)
+
+---
+
+## ✏️Why does this change?
+
+Explain in detail what this changes...
+> Please specify the SRB2 version you used to modify the mod here...
+
+---
+
+## ⚙️Type
+
+- [ ] Bug
+- [ ] Error
+- [ ] Warning
+- [ ] Note
+- [ ] Refactoring
+- [ ] Future Bug
+- [ ] Improviment
+- [ ] Deprecated
+- [ ] Update
+- [ ] Typo
+- [ ] Other
+
+## ⚠️Tested
+
+- [ ] Tested Locally?
+- [ ] Tested with Multiple Players?
+- [ ] Does it break any script?
+- [ ] Does SRB2 crash?
+- [ ] Compatible with the mod?
+- [ ] Does it work with any specific version of SRB2? If so, which one?
+
+---
+
+## 📄Files Modified
+
+-
+-
+-
+
+---
+
+## 📝Notes
+
+Something important the reviewer should know...

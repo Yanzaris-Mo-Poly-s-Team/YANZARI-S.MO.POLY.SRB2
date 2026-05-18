@@ -103,173 +103,105 @@ it will have many characters and many DLCs.
 ### What else do you plan to include in the mod?
 I plan to put a **lot of stuff** on it, I think the SRB2 will be able to handle it.
 
-* Custom Character Selection Screen
-* Customized Credits Screen
-* Customized Player Setup Screen
-* Customized Chat
-* many DLCs
-* A Command Prompt (using `open_ymp-console`)
-* Recreating some functions of Lua 5.4
+* [ ] Custom Character Selection Screen
+* [ ] Customized Credits Screen
+* [ ] Customized Player Setup Screen
+* [ ] Customized Chat
+* [ ] many DLCs
+* [ ] A Command Prompt (using `open_ymp-console`)
+* [ ] Recreating some functions of Lua 5.4
 * Protected Input/Output (I/O)
-  * Passwords: SHA3
-  * Encrypted: AES256
-* Classes
-* A DLC for Yanzari's Mo Poly for compatibility with SRB2 Thokker (the port of SRB2 Thokker to 2.2).
-* Menus so you don't have to mess with console variables.
-* Yanzari's Mo Poly Table (`YanzMoPoly`) will no longer be accessible; only YMKP and YMSP will be available.
-* Yanzari's Modding Kit Poly (YMKP)
+  * [ ] Passwords: SHA3
+  * [ ] Encrypted: AES256
+* [ ] SQL Databanks
+* [ ] Classes
+* [ ] A DLC for Yanzari's Mo Poly for compatibility with SRB2 Thokker (the port of SRB2 Thokker to 2.2).
+* [ ] Menus so you don't have to mess with console variables.
+* [ ] Yanzari's Mo Poly Table (`YanzMoPoly`) will no longer be accessible; only YMKP and YMSP will be available.
+* [ ] Yanzari's Modding Kit Poly (YMKP)
   * ヤンザリの改造キット ポリ
   * Basically, an SDK (Software Development Kit).
   * In this case, it's an MDK (Mod Development Kit).
   * a brief explanation: SDK (Software Development Kit) is a complete set of tools that allows developers to create, test, and integrate applications on a specific platform.
-* Yanzari's Modding Space Poly (YMSP)
+* [ ] Yanzari's Modding Space Poly (YMSP)
   * ヤンザリのモッディングスペースポリ
   * This will be a space where you can put functions, variables, constants, classes, hooks, etc. Everything your mod stores must be in this space.
   * Example to create: `YMKP:AddSpace(name : string)`
-* Support for characters from other mods.
+* [ ] Support for characters from other mods.
 * Among many other things that will make your game good.
 
 ### This shows a bit of scripting for YMKP
 This depends on whether **YMKP is fully added**:\
-  Let's assume that this file is not **init.lua**:
+  - Let's assume that this file is not **init.lua**:
 ```lua
 -- It will probably only work in the final version.
-local Mod = YMKP:AddSpace(spacename : string)
-  Mod:Init(function(API)
+local Mod = YMKP:AlocateSpace(spacename : string)
+Mod:Init(function(API)
   -- when the Space is Loaded
   -- Example
   -- You can only use what the API exposes.
-  local Players = API:GetAllPlayers()
-  local Log = API:GetLog()
-    if Log
-      Log:Print(text : string)
-      local Player = Players:GetLocalPlayer()
-      if (Player and Player:IsValid() and Player:GetMobj() and Player:GetMobj():IsValid()) ~= nil
-        Log:Printf(Player : userdata : ymp_player_t, text : string)
-      end
-    end
+  local DataBankService : Service = self:Require("SQLite3") -- SQLite3
+  local Options : Opt = API:Options({encrypted=true,recovery=true}) /* SEE mode & Recovery mode*/
+  local Databank : DB = DataBankService:Databank(self.id,"rw",Options)
+  local Cursor : DBCursor = Databank.Cursor()
+  local Temp : table = {}
+  local packed : Zip = pack({Temp=Temp})
+  local Exported : nil = self:Export(packed)
+  if Cursor:IsValid()==true then /*Valid?*/
+    -- ...
+  end
    -- ...
 end)
-
-Mod:SetAttributes({
--- Example
-  ["Space"] = "LOL"
--- Define the attributes of the Mod...
-},type : string) -- The type can be YAML, XML, or JSON, Mod:GetAttributes It will return a string in the way the type was defined.
-
-Mod:NetVars(function(Net)
-  -- Example
-  Net:Set(var) -- Variables to Synchronize
-end)
-
-Mod:Credits({
-  -- Example
-  "Yanzari",
-  "You",
-  -- other people
-})
-
-Mod:Freeslot({
-  -- Example
-  "MYSPRITE" = "SPRITE",
-  --Freeslot Everything Here, Not Counting SkinColors
-})   
-
-local MySkinColor = Mod:Skincolor(skincolorname : string)
--- Example
-MySkinColor:Set("name",name : string)
-MySkinColor:Set("colors",colors : table)
-MySkinColor:Set("Chat Color",chatcolor : string)
-MySkinColor:Set("Is Super Color?",supercolor : boolean)
--- etc
-MySkinColor:Def() --Turn SkinColor
-
-Mod:MobjDef(mobjtype : string,{
-  -- Put the names as a string here.
-})
-
-Mod:StateDef(state : string,{
-  -- Put the names as a string here.
-})
-
-Mod:SoundDef(sound : string,{
-  -- Put the names as a string here.
-})
     
-Mod:AddConstants({
-  -- Example
-  [Const : String] = Value : Any
-  -- define the Constants and Its Values
-})
-
-Mod:Hud(function(API : userdata)
-  -- Example
-  local Players = API:GetAllHudPlayer()
-  local Player = Players:GetLocalPlayer()
-  local Hud = API:AddHud(hudname : string,hudtype : string)
-  local FRACUNIT = API:GetSRB2Const("FRACUNIT")
-      
-  Hud:Draw(x : fracunit,y : fracunit,type : string,text_or_patch : string,color : ymp_skincolor_t,text_align : string : if text,font : string : if text) -- Supports accents on words!!! It also supports emojis!!!🥳
-    --Example1: HudSpace:Draw(1*FRACUNIT,1*FRACUNIT,"String","IShowSpēēd😌",API:GetSkinColor("Yellow"),"Center","PLS_SPEED_I_NEED_THIS")
-    --Example2: HudSpace:Draw(1*FRACUNIT,1*FRACUNIT,"Patch","ISKINDAHOMELESS",API:GetSkinColor("RICKROLL"))
-    API:Enable(item : string)
-    API:Disable(item : string)
-    API:Enabled(item : string)
-  end)
-    
-Mod:Hook(hook : string,function(API : userdata)
+Mod:Hook(hook : string,function(API)
   -- Example
   -- You can only use what the API exposes.
-  local Mobjs = API:GetAllMobjs()
-  local Mobj = Mobjs:GetByType(type : string)
-  local Players = API:GetAllPlayers()
-  local Player = Players:GetLocalPlayer()
-  local SkinName = Player:GetSkinName()
-  local ExpectedSkinName = skinname : string
-  local Skin = API:GetSkinTableByName(Player:GetSkinName())
-  local Const = Mod:GetConstants("Const")
-  if SkinName == ExpectedSkinName then
-    local Log = API:GetLog()
-    if Log
-      Log:Print(text : string)
-    end
-    local Io = API:GetIO(privatekey : string, name : string : optional) -- Encrypted with AES!
-    local File = nil
-    local Write = nil
-    local ModLog = Mod:GetMyLog()
-    if File then
-      File = Io:Create(filename : string,mode)
-      Write = File:Write(text : string) -- Encrypted with Base64 & ZLib!
-      if Write:Writed() == true
-        ModLog:Write(text : string)
-      end
-      if File:IsClosed() == true
-        -- ...
-      end
-      if File:Type() == var : string
-        -- ...
-      end
-      File:CreateSha1(File:Read("*a"),privatekey : string) -- Creates a Sha1 at the end of the file.
-      File:CheckSha1(start : number, end : number,publickey : string) -- Check the Sha1 to see if there are any inconsistencies.
+  local packed : Zip = self:Import()
+  local Temp : Table = packed:unpack()
+  local Mobjs : MapObjects = API:AllMobj()
+  for Mobj in Mobjs:Iterate() do
+    if Mobj
+    and Mobj:Valid() then
+      -- ...
     end
   end
-end,extra : any : depends)
--- I think modules can be exported, but in a different way.
-    
+end)
+
+Mod:Library(function(API)
+    -- Exportable Content
+    -- an example
+    local Module : module = module("MyMod") /* or service("MyService") */
+    local TestClass : class = class("UnConvertedBytes")
+    function TestClass.__init__()
+      -- Private: priv
+      -- Public: self
+      -- Args: args
+      self.msg = str(args.arg[1])
+      return null
+    end
+    function Module.new(message)
+      return TestClass(message)
+    end
+    function Module.message()
+      if class(self) ~= TestClass then warning("Invalid") return end
+      local arg1 : Str = str(self.msg)
+      API:ChatMessage("["..mod.name.."] "..arg1)
+      return null
+    end
+    return Module
+end)
+
 Mod:Exit(function(API)
   -- When the game performs an action considered to be closed
   -- an example
-  local ExitType = API:GetExitType()
-  if ExitType == "SRB2"
-  elseif ExitType == "Kick"
-    local KickReason = API:GetKickReason()
-    if KickReason == "Ban"
-      local Io = API:GetIO("A1B2C3D4E5F6G7H8I9", name : string : optional) -- Encrypted with AES!
-      local File = nil
-      local Write = nil
-      File = Io:Create(filename : string,mode)
-      Write = File:Write(API:GetServerName()) -- Encrypted with Base64 & ZLib!
-    end
+  local ExitType : boolean = API:GetExitType()
+  local MyCustomMod : Module = self:Require("MyMod")
+  if ExitType == true then
+    Module.message("Closing")
+    return
+  else
+    Module.message("ByeBye")
+    return
   end
 end)
 ```
@@ -287,8 +219,8 @@ Use YMKP and YMSP responsibly\
 if they are implemented.😉
   
 ### Do you care about file security?
-Yes, that's why we use Base64,\
-AES, sha1, and zlib; we don't\
+Yes, that's why we use\
+AES, sha3, and SQLite3; we don't\
 use only base64 like other modders\
 for security reasons.
 
@@ -306,12 +238,8 @@ more than ~**1GB**.
 
 ### Which languages are supported?
 🇧🇷**Portuguese: Brazil** (with Accents in Words),\
-🇵🇹**Portuguese: Portugal** (with Accents in Words),\
-🇺🇲**English**,\
-🇪🇸**Spanish** (with Accents in Words),\
-🇰🇷**Korean** (With Korean Characters),\
-🇯🇵**Japanese** (With Japanese Characters) and\
-🇷🇺**Russian** (With Russian Characters).
+🇺🇸**English**,\
+🇪🇸**Spanish** (with Accents in Words)
 
 ### Will there be a sequel?
 Yes. It was called "**Yanzari's Lost Island**"\
@@ -394,12 +322,7 @@ Then, run other mods if you want.
 [![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/colored.png)](#status)
 
 ## ➤ Status
-> It was lost, but there's a backup.
-> HOWEVER... the backup is a VERY early version of Yanzari's Mo Poly.
-> And the computer malfunctioned again.
->
-> Wait for the computer to come back to life and for everything to return-
-> to how it was before.
+> OK
 >
 >   —By ヤンザリ(Yanzari)
 

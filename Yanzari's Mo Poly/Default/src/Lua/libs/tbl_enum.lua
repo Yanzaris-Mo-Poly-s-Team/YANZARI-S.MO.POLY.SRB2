@@ -1,6 +1,6 @@
 local function FromEnum(tbl)
 	local output = {}
-	for k,v in ipairs(tbl) do
+	for k,v in pairs(tbl) do
 		output[v] = k
 	end
 	return output

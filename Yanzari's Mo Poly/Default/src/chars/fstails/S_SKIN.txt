@@ -11,6 +11,6 @@ acceleration = 40
 prefcolor = Orange Lize
 prefoppositecolor = Azure Lize
 flags = SF_RUNONWATER|SF_DASHMODE
-followitem = MT_SATFSTAILSOVERLAY
+# followitem = MT_SATFSTAILSOVERLAY
 spinitem = MT_THOK
 revitem = MT_CORK

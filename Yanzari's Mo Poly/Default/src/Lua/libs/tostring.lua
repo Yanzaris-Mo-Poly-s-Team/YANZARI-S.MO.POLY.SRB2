@@ -1,36 +1,44 @@
-local function String(obj)
-	if obj==nil then
+local function String(obj, level, indent)
+	level = level or 0
+	indent = indent or "    "
+
+	if obj == nil then
 		return "nil"
 	end
-	if type(obj)=="string" then
-		return "\""..obj.."\""
-	end
-	if type(obj)=="number" then
+
+	local obj_type = type(obj)
+	if obj_type == "string" then
+		return "\"" .. obj .. "\""
+	elseif obj_type == "number" then
 		return tostring(obj)
-	end
-	if type(obj)=="boolean" then
-		if obj==true then
-			return "true"
-		end
-		return "false"
-	end
-	if type(obj)=="table" then
-		local output = "{".."\n"
-		local sep = ",".."\n"
-		local pairs_test,var1,var2 = pairs(obj)
-		if pairs_test ~= nil then
-			for k,v in pairs_test, var1, var2 do
-				if v ~= obj then
-					output = output.."["..String(k).."] = "..String(v)..sep
-				else
-					output = output.."["..String(k).."] = self"..sep
-				end
-			end
-		else
+	elseif obj_type == "boolean" then
+		return obj and "true" or "false"
+	elseif obj_type == "table" then
+		local first = next(obj)
+		if first == nil then
 			return "{}"
 		end
-		return output:sub(1,#output-#sep).."\n".."}"
+
+		local current_indent = string.rep(indent, level + 1)
+		local close_indent   = string.rep(indent, level)
+
+		local output = "{\n"
+		for k, v in pairs(obj) do
+			output = output .. current_indent ..
+					 "[" .. String(k, level + 1, indent) .. "] = "
+			if v == obj then
+				output = output .. "self"
+			else
+				output = output .. String(v, level + 1, indent)
+			end
+			output = output .. ",\n"
+		end
+
+		output = output:sub(1, -3) .. "\n" .. close_indent .. "}"
+		return output
+	else
+		return obj_type
 	end
-	return type(obj)
 end
+
 return String

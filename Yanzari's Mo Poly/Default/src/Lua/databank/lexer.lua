@@ -152,7 +152,8 @@ local KeyWordsTokens = {
 	["TK_WHERE"] = 144,
 	["TK_WINDOW"] = 145,
 	["TK_WITH"] = 146,
-	["TK_WITHOUT"] = 147
+	["TK_WITHOUT"] = 147,
+	["TK_DOMAIN"] = 148, -- PostgreSQL
 }
 local Tokens = {
 	-- types
@@ -209,7 +210,7 @@ function Lexer:Emit(tk,arg1,arg2)
 	return
 end
 function Lexer:Error(tx)
-	error("SQL <Lexer> Error at '"..self.line.."|"..self.col.."': "..tx)
+	error("SQL <Lexer> Error at '"..self.line.."|"..self.col.."|"..self.current.."': "..tx)
 	return
 end
 function Lexer:Flush()
@@ -323,8 +324,13 @@ function Lexer:String()
 					break
 				end
 			end
-			self:InsertToken(self.current)
-			self:Advance()
+			if self.current == "\\" then
+				self:Advance()
+				self:InsertToken(self:Escape())
+			else
+				self:InsertToken(self.current)
+				self:Advance()
+			end
 		end
 		self:Advance()
 		self:Emit("TK_STRING",self:Flush())
@@ -414,6 +420,21 @@ function Lexer:Operator()
 		return true
 	end
 	
+	--PostgreSQL
+	if self.current == "!"
+	and self.next == "~" then
+		self:InsertToken(self.current)
+		self:Advance()
+		if self.next == "*" then
+			self:InsertToken(self.current)
+			self:Advance()
+		end
+		self:InsertToken(self.current)
+		self:Advance()
+		self:Emit("TK_OPERATOR",self:Flush())
+		return true
+	end
+	
 	if self.current == "<"
 	and self.next == ">" then
 		self:InsertToken(self.current)
@@ -442,7 +463,19 @@ function Lexer:Operator()
 		return true
 	end
 	if self.current == "="
-	and self.next == "=" then
+		self:InsertToken(self.current)
+		self:Advance()
+		if self.next == "=" then
+			self:InsertToken(self.current)
+			self:Advance()
+		end
+		self:Emit("TK_OPERATOR",self:Flush())
+		return true
+	end
+	
+	--PostgreSQL
+	if self.current == "~"
+	and self.next == "*" then
 		self:InsertToken(self.current)
 		self:Advance()
 		self:InsertToken(self.current)
@@ -450,6 +483,16 @@ function Lexer:Operator()
 		self:Emit("TK_OPERATOR",self:Flush())
 		return true
 	end
+	if self.current == "!"
+	and self.next == "~" then
+		self:InsertToken(self.current)
+		self:Advance()
+		self:InsertToken(self.current)
+		self:Advance()
+		self:Emit("TK_OPERATOR",self:Flush())
+		return true
+	end
+	
 	if self.current == "<"
 	and self.next == "<" then
 		self:InsertToken(self.current)
@@ -733,110 +776,131 @@ end
 function Lexer:Keyword()
 	return self:Identifier()
 end
-function Lexer:SpecialCommands()
-	-- Special Commands
-	-- SQL Original does not support
-	if self.current ~= "\\" then
-		return false
+function Lexer:UTF8(cp)
+	if type(cp) ~= "number" then
+		self:Error("Invalid Unicode codepoint type")
 	end
-	self:Advance()
-	if self:OnlyAlphabetic() then
-		if self.current == "x"
-		or self.current == "X" then
-			self:InsertToken(self.current)
-			self:Advance()
-			if (string.byte(self.current) >= string.byte("0")
-			and string.byte(self.current) <= string.byte("9")) or
-			(string.byte(self.current) >= string.byte("A")
-			and string.byte(self.current) <= string.byte("F")) or
-			(string.byte(self.current) >= string.byte("a")
-			and string.byte(self.current) <= string.byte("f"))then
-				self:InsertToken(self.current)
-				self:Advance()
-			else
-				self:Error("Invalid Command")
-			end
-			if (string.byte(self.current) >= string.byte("0")
-			and string.byte(self.current) <= string.byte("9")) or
-			(string.byte(self.current) >= string.byte("A")
-			and string.byte(self.current) <= string.byte("F")) or
-			(string.byte(self.current) >= string.byte("a")
-			and string.byte(self.current) <= string.byte("f"))then
-				self:InsertToken(self.current)
-			else
-				self:Error("Invalid Command")
-			end
-		elseif self.current == "u"
-		or self.current == "U" then
-			self:InsertToken(self.current)
-			self:Advance()
-			if (string.byte(self.current) >= string.byte("0")
-			and string.byte(self.current) <= string.byte("9")) or
-			(string.byte(self.current) >= string.byte("A")
-			and string.byte(self.current) <= string.byte("F")) or
-			(string.byte(self.current) >= string.byte("a")
-			and string.byte(self.current) <= string.byte("f"))then
-				self:InsertToken(self.current)
-				self:Advance()
-			else
-				self:Error("Invalid Command")
-			end
-			if (string.byte(self.current) >= string.byte("0")
-			and string.byte(self.current) <= string.byte("9")) or
-			(string.byte(self.current) >= string.byte("A")
-			and string.byte(self.current) <= string.byte("F")) or
-			(string.byte(self.current) >= string.byte("a")
-			and string.byte(self.current) <= string.byte("f"))then
-				self:InsertToken(self.current)
-				self:Advance()
-			else
-				self:Error("Invalid Command")
-			end
-			if (string.byte(self.current) >= string.byte("0")
-			and string.byte(self.current) <= string.byte("9")) or
-			(string.byte(self.current) >= string.byte("A")
-			and string.byte(self.current) <= string.byte("F")) or
-			(string.byte(self.current) >= string.byte("a")
-			and string.byte(self.current) <= string.byte("f"))then
-				self:InsertToken(self.current)
-				self:Advance()
-			else
-				self:Error("Invalid Command")
-			end
-			if (string.byte(self.current) >= string.byte("0")
-			and string.byte(self.current) <= string.byte("9")) or
-			(string.byte(self.current) >= string.byte("A")
-			and string.byte(self.current) <= string.byte("F")) or
-			(string.byte(self.current) >= string.byte("a")
-			and string.byte(self.current) <= string.byte("f"))then
-				self:InsertToken(self.current)
-			else
-				self:Error("Invalid Command")
-			end
-		else
-			self:InsertToken(self.current)
+	if cp < 0 then
+		self:Error("Negative Unicode codepoint")
+	end
+	if cp > 0x10FFFF then
+		self:Error("Unicode codepoint out of range")
+	end
+	if cp >= 0xD800 and cp <= 0xDFFF then
+		self:Error("UTF-16 surrogate halves are invalid Unicode scalar values")
+	end
+	if cp <= 0x7F then
+		return string.char(cp)
+	end
+	if cp <= 0x7FF then
+		local b1 = 0xC0 + ((cp >> 6) & 0x1F)
+		local b2 = 0x80 + (cp & 0x3F)
+		
+		return string.char(b1, b2)
+	end
+	if cp <= 0xFFFF then
+		local b1 = 0xE0 + ((cp >> 12) & 0x0F)
+		local b2 = 0x80 + ((cp >> 6) & 0x3F)
+		local b3 = 0x80 + (cp & 0x3F)
+		
+		return string.char(b1, b2, b3)
+	end
+	if cp <= 0x10FFFF then
+		local b1 = 0xF0 + ((cp >> 18) & 0x07)
+		local b2 = 0x80 + ((cp >> 12) & 0x3F)
+		local b3 = 0x80 + ((cp >> 6) & 0x3F)
+		local b4 = 0x80 + (cp & 0x3F)
+		return string.char(b1, b2, b3, b4)
+	end
+	self:Error("Failed to encode UTF-8")
+end
+function Lexer:ReadHex(count)
+	local buffer = {}
+	
+	for i = 1, count do
+		if self:IsHexadecimal() ~= true then
+			self:Error("Invalid hexadecimal escape")
 		end
-	elseif self.current == "\\" then
-		self:InsertToken("\\")
-	elseif self.current == '"' then
-		self:InsertToken('"')
-	elseif self.current == "'" then
-		self:InsertToken("'")
-	elseif self.current == "n" then
+		
+		buffer[#buffer + 1] = self.current
 		self:Advance()
-		return true
+	end
+	
+	return table.concat(buffer, "")
+end
+
+function Lexer:Escape()
+	if self.current == "n" then
+		self:Advance()
+		return "\n"
+		
 	elseif self.current == "r" then
 		self:Advance()
-		return true
+		return "\r"
+		
 	elseif self.current == "t" then
 		self:Advance()
-		return true
-	else
-		self:Error("Invalid Command")
+		return "\t"
+		
+	elseif self.current == "b" then
+		self:Advance()
+		return "\b"
+		
+	elseif self.current == "f" then
+		self:Advance()
+		return "\f"
+		
+	elseif self.current == "v" then
+		self:Advance()
+		return "\v"
+		
+	elseif self.current == "a" then
+		self:Advance()
+		return "\a"
+		
+	elseif self.current == "e" then
+		self:Advance()
+		return string.char(27)
+		
+	elseif self.current == "\\" then
+		self:Advance()
+		return "\\"
+		
+	elseif self.current == "'" then
+		self:Advance()
+		return "'"
+		
+	elseif self.current == '"' then
+		self:Advance()
+		return '"'
+		
+	elseif self.current == "x"
+	or self.current == "X" then
+		
+		self:Advance()
+		
+		local hex = self:ReadHex(2)
+		local value = tonumber(hex, 16)
+		
+		return string.char(value)
+		
+	elseif self.current == "u" then
+		self:Advance()
+		
+		local hex = self:ReadHex(4)
+		local cp = tonumber(hex, 16)
+		
+		return self:UTF8(cp)
+		
+	elseif self.current == "U" then
+		self:Advance()
+		
+		local hex = self:ReadHex(8)
+		local cp = tonumber(hex, 16)
+		
+		return self:UTF8(cp)
 	end
-	self:Advance()
-	self:Emit("TK_COMMAND",self:Flush())
-	return true
+	self:Error("Invalid escape sequence")
 end
 function Lexer:Identifier()
 	if self:Alphabetic() then
@@ -997,7 +1061,6 @@ function Lexer:Tokenize()
 	if self:EOF()==true then break end
 		if self:String()~=true
 		and self:Comment()~=true
-		and self:SpecialCommands()~=true
 		and self:Variable()~=true
 		and self:Hexadecimal()~=true
 		and self:Blob()~=true

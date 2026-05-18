@@ -6,7 +6,7 @@
 #*                                       *
 
 # The ReadMe itself
-README
+.env
 
 # GitHub tools
 *.ymp.github.pull-request
