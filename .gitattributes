@@ -1,2 +1,2 @@
-*.laux linguist-language=Laux
-*.laux linguist-vendored
+*.laux linguist-language=Lua
+*.laux linguist-generated
