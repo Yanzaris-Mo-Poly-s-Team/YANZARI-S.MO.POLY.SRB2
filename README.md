@@ -1,6 +1,6 @@
 # ➤ ヤンザリのモ・ポリ (Yanzari's Mo Poly)
 
-![progress](https://progress-bar.dev/1/)
+![progress](https://progress.rocks/1/)
 
 ---
 ## ➤ Badges
