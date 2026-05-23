@@ -1,153 +1,160 @@
+cmake_minimum_required(VERSION 3.16)
+
 #--------------------------------------------------------------------------------------------
 #---*CMakeLists.txt
-#--*A CMakeLists.txt file is available for you to compile in CMake.
+#--*A CMake build system so you can compile the Mod
 #--*
-#--*By ヤンザリ(Yanzari)
+#--*By ヤンザリ (Yanzari)
 #--------------------------------------------------------------------------------------------
-#--*Start*--*CMakeLists.txt*--
 
-#--*Comment*--*Requires CMake 3.10*
-cmake_minimum_required(VERSION 3.10)
-project(YanzarisMoPolyByYanzari)
+project(SMRFCL_Yanzaris_Mo_Poly)
 
-#--*Category*-- 
-#--*Settings
-#--*Category*-- 
-
+#--$ Project Configuration
 set(MOD_NAME "SMRFCL_Yanzaris-Mo-Poly")
 set(VERSION "v0.0.1")
-set(OUTPUT_FILE "${MOD_NAME}_${VERSION}.pk3")
+set(OUTPUT "${MOD_NAME}_${VERSION}.pk3")
 
-#--*Comment*--*If you don't have a build type*
+#--$ Directory Structure
+set(SRC_DIR "${CMAKE_SOURCE_DIR}/src")
+set(BUILD_DIR "${CMAKE_BINARY_DIR}/build")
+set(TEMP_DIR "${BUILD_DIR}/temp")
+
+#--$ Build Type
 if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
+	set(CMAKE_BUILD_TYPE Release)
 endif()
 
-#--*Comment*--*Directories*
-set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
-set(LUA_DIR ${SRC_DIR}/Lua)
-set(BUILD_TEMP_DIR ${CMAKE_CURRENT_BINARY_DIR}/temp_pk3)
+#--------------------------------------------------------------------------------------------
+#--*Validation
+#--------------------------------------------------------------------------------------------
 
-#--*Comment*--*A Note from Build*
-set(BUILD_NOTE_CONTENT "Thank you for building the mod via cmake, yanzari appreciates it.
+if(NOT EXISTS "${SRC_DIR}")
+	message(FATAL_ERROR "Source directory '${SRC_DIR}' not found!")
+endif()
 
-—Yanzari")
+#--------------------------------------------------------------------------------------------
+#--*Prepare Build Directories
+#--------------------------------------------------------------------------------------------
 
-#--*Comment*--*Create a MakeType.lua file in the Lua folder of the mod*
-function(create_maketype_lua build_type)
-    if(${build_type} STREQUAL "Debug")
-        file(WRITE ${BUILD_TEMP_DIR}/Lua/Maketype.lua 
-            "local YMP = YanzMoPoly\n"
-            "YMP.BuildType = {build=\"Debug\",compmod=\"cmake\"}"
-        )
-    else()
-        file(WRITE ${BUILD_TEMP_DIR}/Lua/Maketype.lua 
-            "local YMP = YanzMoPoly\n"
-            "YMP.BuildType = {build=\"Release\",compmod=\"cmake\"}"
-        )
-    endif()
-endfunction()
+file(MAKE_DIRECTORY "${BUILD_DIR}")
+file(MAKE_DIRECTORY "${TEMP_DIR}")
 
-#--*Comment*--*Custom target to create a custom .pk3 file*
-add_custom_target(pk3 ALL
-    COMMENT "Building ${OUTPUT_FILE} in ${CMAKE_BUILD_TYPE} mode"
-    DEPENDS ${SRC_DIR}
+#--------------------------------------------------------------------------------------------
+#--*Copy Source Files
+#--------------------------------------------------------------------------------------------
+
+file(COPY "${SRC_DIR}/"
+	DESTINATION "${TEMP_DIR}")
+
+#--------------------------------------------------------------------------------------------
+#--*Generate Maketype.lua
+#--------------------------------------------------------------------------------------------
+
+file(MAKE_DIRECTORY "${TEMP_DIR}/Lua")
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+
+	file(WRITE "${TEMP_DIR}/Lua/Maketype.lua"
+"local YMP = YanzMoPoly
+YMP.BuildType = {build=\"Debug\",compmod=\"cmake\"}
+")
+
+else()
+
+	file(WRITE "${TEMP_DIR}/Lua/Maketype.lua"
+"local YMP = YanzMoPoly
+YMP.BuildType = {build=\"Release\",compmod=\"cmake\"}
+")
+
+endif()
+
+#--------------------------------------------------------------------------------------------
+#--*Create Build Note
+#--------------------------------------------------------------------------------------------
+
+file(WRITE "${TEMP_DIR}/.build-note"
+"Thank you for building the mod via cmake, yanzari appreciates it.
+
+—Yanzari
+")
+
+#--------------------------------------------------------------------------------------------
+#--*LAUX Compilation
+#--------------------------------------------------------------------------------------------
+
+message(STATUS "Compiling recursive .laux files...")
+
+execute_process(
+	COMMAND lauxc workspace
+	WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+	RESULT_VARIABLE LAUX_RESULT
 )
 
-#--*Comment*--*Creating the command to make the .pk3 file*
-add_custom_command(
-    TARGET pk3
-    PRE_BUILD
-    COMMAND ${CMAKE_COMMAND} -E remove_directory ${BUILD_TEMP_DIR}
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${BUILD_TEMP_DIR}
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${BUILD_TEMP_DIR}/Lua
-    COMMENT "Preparing build directories"
+if(NOT LAUX_RESULT EQUAL 0)
+	message(FATAL_ERROR "LAUX compilation failed!")
+endif()
+
+#--------------------------------------------------------------------------------------------
+#--*Remove .laux Files Recursively
+#--------------------------------------------------------------------------------------------
+
+file(GLOB_RECURSE LAUX_FILES
+	"${TEMP_DIR}/*.laux")
+
+foreach(FILE ${LAUX_FILES})
+	file(REMOVE "${FILE}")
+endforeach()
+
+#--------------------------------------------------------------------------------------------
+#--*Create PK3
+#--------------------------------------------------------------------------------------------
+
+find_program(ZIP_EXECUTABLE zip)
+
+if(NOT ZIP_EXECUTABLE)
+	message(FATAL_ERROR "zip executable not found!")
+endif()
+
+add_custom_target(build_pk3 ALL
+
+	COMMAND ${CMAKE_COMMAND} -E echo "Creating PK3 archive..."
+
+	COMMAND
+	${ZIP_EXECUTABLE}
+	-qr
+	"${CMAKE_BINARY_DIR}/${OUTPUT}"
+	.
+
+	WORKING_DIRECTORY "${TEMP_DIR}"
+
+	COMMAND ${CMAKE_COMMAND} -E echo "✓ Created ${OUTPUT}"
+
 )
 
-add_custom_command(
-    TARGET pk3
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${SRC_DIR} ${BUILD_TEMP_DIR}
-    COMMENT "Copying source files"
+#--------------------------------------------------------------------------------------------
+#--*Clean Extra Files
+#--------------------------------------------------------------------------------------------
+
+set_property(
+	DIRECTORY
+	APPEND PROPERTY
+	ADDITIONAL_MAKE_CLEAN_FILES
+	"${CMAKE_BINARY_DIR}/${OUTPUT}"
 )
 
-add_custom_command(
-    TARGET pk3
-    COMMAND ${CMAKE_COMMAND} -E echo "${BUILD_NOTE_CONTENT}" > ${BUILD_TEMP_DIR}/.build-note
-    COMMENT "Creating .build-note"
-)
+#--------------------------------------------------------------------------------------------
+#--*Info
+#--------------------------------------------------------------------------------------------
 
-add_custom_command(
-    TARGET pk3
-    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_LIST_FILE}.maketype.cmake
-    COMMENT "Creating Maketype.lua"
-)
+message(STATUS "========================================")
+message(STATUS "${MOD_NAME} Build System")
+message(STATUS "========================================")
+message(STATUS "Version: ${VERSION}")
+message(STATUS "Output: ${OUTPUT}")
+message(STATUS "Source Directory: ${SRC_DIR}")
+message(STATUS "Build Directory: ${BUILD_DIR}")
+message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
 
-add_custom_command(
-    TARGET pk3
-    COMMAND ${CMAKE_COMMAND} -E tar cf ${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT_FILE} --format=zip .
-    WORKING_DIRECTORY ${BUILD_TEMP_DIR}
-    COMMENT "Creating PK3 archive"
-)
-
-add_custom_command(
-    TARGET pk3
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E remove_directory ${BUILD_TEMP_DIR}
-    COMMENT "Cleaning temporary files"
-)
-
-#--*Comment*--*Write to the file to determine if the file is from cmake or make, and if it is debug or release*
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/CMakeLists.txt.maketype.cmake
-    "if(\"\${CMAKE_BUILD_TYPE}\" STREQUAL \"Debug\")\n"
-    "    file(WRITE \${BUILD_TEMP_DIR}/Lua/Maketype.lua \n"
-    "        \"local YMP = YanzMoPoly\\n\"\n"
-    "        \"YMP.BuildType = {build=\\\"Debug\\\",compmod=\\\"cmake\\\"}\"\n"
-    "    )\n"
-    "else()\n"
-    "    file(WRITE \${BUILD_TEMP_DIR}/Lua/Maketype.lua \n"
-    "        \"local YMP = YanzMoPoly\\n\"\n"
-    "        \"YMP.BuildType = {build=\\\"Release\\\",compmod=\\\"cmake\\\"}\"\n"
-    "    )\n"
-    "endif()\n"
-)
-
-#--*Category*-- 
-#--*Utility Targets
-#--*Category*-- 
-add_custom_target(clean
-    COMMENT "Cleaning build artifacts"
-    COMMAND ${CMAKE_COMMAND} -E remove -f ${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT_FILE}
-    COMMAND ${CMAKE_COMMAND} -E remove_directory ${BUILD_TEMP_DIR}
-)
-
-add_custom_target(info
-    COMMENT "Project Information:\n"
-            "  Name: ${MOD_NAME}\n"
-            "  Version: ${VERSION}\n"
-            "  Output: ${OUTPUT_FILE}\n"
-            "  Build Type: ${CMAKE_BUILD_TYPE}\n"
-            "  Source Dir: ${SRC_DIR}"
-)
-
-add_custom_target(help
-    COMMENT "Available targets:\n"
-            "  make pk3 (or just make) - Build the PK3 file\n"
-            "  make clean - Remove build artifacts\n"
-            "  make info - Show project information\n"
-            "  make help - Show this help message\n\n"
-            "Build types:\n"
-            "  Debug: cmake -DCMAKE_BUILD_TYPE=Debug ..\n"
-            "  Release: cmake -DCMAKE_BUILD_TYPE=Release .."
-)
-
-#--*Comment*--*Print the Success Message!!*
-add_custom_command(
-    TARGET pk3
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E echo "The compilation was completed successfully."
-    COMMAND ${CMAKE_COMMAND} -E echo "Output: ${OUTPUT_FILE}"
-    COMMAND ${CMAKE_COMMAND} -E echo "File Made By Yanzari"
-)
-
-
-#--*End*--*CMakeLists.txt*--
+#--------------------------------------------------------------------------------------------
+#--*End*--*CMakeLists.txt
+#--------------------------------------------------------------------------------------------

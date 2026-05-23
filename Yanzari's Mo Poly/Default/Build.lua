@@ -1,265 +1,251 @@
---------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------
 ---*Build.lua
----*A Build.lua so you can compile the Mod
---* This is a method in case you prefer to compile using Lua, since srb2 uses Lua
---* I made this in reference to SRB2.
---*Usage: lua Build.lua [release|debug|clean|distclean|info]
+--*A Lua build system so you can compile the Mod
 --*
---*By ヤンザリ(Yanzari)
---------------------------------------------------------------------------------------------
---*Start*--*Build.lua*--
+--*By ヤンザリ (Yanzari)
+----------------------------------------------------------------------------------------------
 
---Log
-local function printlog(txt)
-print("Build.lua: "..txt)
-end
-
---Operating-System--
---------------------------------------------------------------------------------------------
-
-local Os = {}
-
-local function Os.Detected()
-    local n = package.config:sub(1,1) == "\\" and "Windows" or "Unix-like"
-    
-    if os_name == "Unix-like" then
-        local f = io.open("/system/build.prop", "r")
-        if f then
-            f:close()
-            return "Android"
-        else
-            return "Linux"
-        end
-    end
-    
-    return n
-end
-
-local function Os.Admin(os)
-    local admin = false
-    
-    if os == "Windows" then
-        local cmd = 'reg query "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion" 2>nul'
-        local handle = io.popen(cmd)
-        local result = handle:read("*a")
-        handle:close()
-        admin = result ~= ""
-    elseif os == "Linux" then
-        local handle = io.popen("id -u")
-        local uid = tonumber(handle:read("*a"))
-        handle:close()
-        admin = uid == 0
-    elseif os == "Android" then
-        local cmd = "id -u"
-        local handle = io.popen(cmd)
-        local uid = tonumber(handle:read("*a"))
-        handle:close()
-        admin = uid == 0
-    end
-    
-    return admin
-end
-
---running-as-super-user--
---------------------------------------------------------------------------------------------
-
-local Device = Os.Detected()
-local IsAdmin = Os.Admin(Device)
-if IsAdmin
-if Device ~= "Windows"
-printlog("You are running as root.")
-if Device ~= "Linux"
-printlog("Be careful with your guarantee.")
-end
-else
-printlog("You are running as administrator.")
-end
-else
-if Device ~= "Windows"
-printlog("You are not running as root.")
-else
-printlog("You are not running as administrator.")
-end
-end
-
---------------------------------------------------------------------------------------------
-
-local function saferequire(lib)
-local ok,lib = pcall(require,lib)
-if ok then
-return lib
-end
-return nil
-end
-
-local lfs = saferequire("lfs")  --$ This is our only dependency.
-if lfs == nil then
-printlog("Install the Lua File System on LuaRocks to be able to compile Yanzari Mo Poly using Lua.")
-printlog("Install using: luarocks install luafilesystem")
-return
-end
---$ Download the dependency so you can use the script.
+local lfs = require("lfs")
 
 --$ Project Configuration
 local MOD_NAME = "SMRFCL_Yanzaris-Mo-Poly"
-local VERSION  = "v0.0.1"
-local OUTPUT   = string.format("%s_%s.pk3", MOD_NAME, VERSION)
+local VERSION = "v0.0.1"
+local OUTPUT = MOD_NAME .. "_" .. VERSION .. ".pk3"
 
-local SRC_DIR  = "src"
-local LUA_DIR  = SRC_DIR .. "/Lua"
+--$ Directory Structure
+local SRC_DIR = "src"
+local LUA_DIR = SRC_DIR .. "/Lua"
 local BUILD_DIR = "build"
-local TEMP_DIR  = BUILD_DIR .. "/temp"
+local TEMP_DIR = BUILD_DIR .. "/temp"
 
---$ Commands
-local IsWindows = package.config:sub(1,1) == '\\'
+--$ Build Type
+local BUILD_TYPE = arg[1] or "release"
 
-local function F_CreateDirectory(path)
-    if IsWindows then
-        os.execute(string.format('mkdir "%s" 2>nul', path))
-    else
-        os.execute(string.format('mkdir -p "%s"', path))
-    end
+--$ Colors
+local GREEN  = "\27[0;32m"
+local YELLOW = "\27[1;33m"
+local RED    = "\27[0;31m"
+local BLUE   = "\27[0;34m"
+local CYAN   = "\27[0;36m"
+local NC     = "\27[0m"
+
+----------------------------------------------------------------------------------------------
+--* Utility Functions
+----------------------------------------------------------------------------------------------
+
+local function echo(color, text)
+	print(color .. text .. NC)
 end
 
-local function F_RemoveDirectory(path)
-    if IsWindows then
-        os.execute(string.format('rmdir /s /q "%s" 2>nul', path))
-    else
-        os.execute(string.format('rm -rf "%s"', path))
-    end
+local function exists(path)
+	return lfs.attributes(path) ~= nil
 end
 
-local function F_CopyDirectory(src, dest)
-    if IsWindows then
-        os.execute(string.format('xcopy "%s" "%s" /E /I /Y >nul', src, dest))
-    else
-        os.execute(string.format('cp -r "%s" "%s"', src, dest))
-    end
+local function mkdir(path)
+	if not exists(path) then
+		lfs.mkdir(path)
+	end
 end
 
-local function F_Echo(msg, color)
-    printlog(msg)
+local function recursive_mkdir(path)
+	local current = ""
+
+	for part in path:gmatch("[^/]+") do
+		current = current == "" and part or (current .. "/" .. part)
+		mkdir(current)
+	end
 end
 
-local function F_Usage()
-    F_Echo("Usage: lua Build.lua [release|debug|clean|distclean|info]")
+local function recursive_copy(src, dst)
+	recursive_mkdir(dst)
+
+	for file in lfs.dir(src) do
+		if file ~= "." and file ~= ".." then
+			local srcpath = src .. "/" .. file
+			local dstpath = dst .. "/" .. file
+
+			local attr = lfs.attributes(srcpath)
+
+			if attr.mode == "directory" then
+				recursive_copy(srcpath, dstpath)
+			else
+				local infile = io.open(srcpath, "rb")
+
+				if infile then
+					local data = infile:read("*a")
+					infile:close()
+
+					local outfile = io.open(dstpath, "wb")
+
+					if outfile then
+						outfile:write(data)
+						outfile:close()
+					end
+				end
+			end
+		end
+	end
 end
 
-local function F_CreateCompilationNote(tempdir)
-    local f = io.open(tempdir .. "/.build-note", "w")
-    f:write("Thank you for building the mod via Build.lua, yanzari appreciates it.\n\n—Yanzari\n")
-    f:close()
+local function recursive_delete_laux(path)
+	for file in lfs.dir(path) do
+		if file ~= "." and file ~= ".." then
+			local fullpath = path .. "/" .. file
+			local attr = lfs.attributes(fullpath)
+
+			if attr.mode == "directory" then
+				recursive_delete_laux(fullpath)
+			else
+				if fullpath:match("%.laux$") then
+					echo(BLUE, "Removing " .. fullpath)
+					os.remove(fullpath)
+				end
+			end
+		end
+	end
 end
 
-local function F_CreateBuildIdentificationFile(tempdir, build_type)
-    local lua_dir = tempdir .. "/Lua"
-    F_CreateDirectory(lua_dir)
-    local f = io.open(lua_dir .. "/Maketype.lua", "w")
-    f:write("local YMP = YanzMoPoly\n")
-    if build_type == "debug" then
-        f:write('YMP.BuildType = { build = "Debug", compmod = "Build.lua" }\n')
-    else
-        f:write('YMP.BuildType = { build = "Release", compmod = "Build.lua" }\n')
-    end
-    f:close()
+----------------------------------------------------------------------------------------------
+--* Validation
+----------------------------------------------------------------------------------------------
+
+if not exists(SRC_DIR) then
+	echo(RED, "Error: Source directory '" .. SRC_DIR .. "' not found!")
+	os.exit(1)
 end
 
-local function F_CreateZip(tempdir, output)
-    if IsWindows then
-        local cmd = string.format(
-            'powershell -Command "Compress-Archive -Path \\"%s\\*\\*\\" -DestinationPath \\"%s\\""',
-            tempdir, output
-        )
-        os.execute(cmd)
-    else
-        local cwd = lfs.currentdir()
-        os.execute(string.format('cd "%s" && zip -qr "../%s" .', tempdir, output))
-        lfs.chdir(cwd)
-    end
+----------------------------------------------------------------------------------------------
+--* Prepare Build
+----------------------------------------------------------------------------------------------
+
+echo(CYAN, "Preparing build directories...")
+
+recursive_mkdir(BUILD_DIR)
+recursive_mkdir(TEMP_DIR)
+
+----------------------------------------------------------------------------------------------
+--* Copy Source Files
+----------------------------------------------------------------------------------------------
+
+echo(BLUE, "Copying source files...")
+
+recursive_copy(SRC_DIR, TEMP_DIR)
+
+recursive_mkdir(TEMP_DIR .. "/Lua")
+
+----------------------------------------------------------------------------------------------
+--* Compile LAUX
+----------------------------------------------------------------------------------------------
+
+echo(CYAN, "Compiling recursive .laux files...")
+
+local laux_result = os.execute("lauxc workspace")
+
+if laux_result ~= 0 and laux_result ~= true then
+	echo(RED, "LAUX compilation failed!")
+	os.exit(1)
 end
 
-local function F_CopySrc()
-    F_Echo("Copying source files...", "")
-    F_CopyDirectory(SRC_DIR, TEMP_DIR)
-    F_CreateDirectory(TEMP_DIR .. "/Lua")
+----------------------------------------------------------------------------------------------
+--* Remove .laux Files
+----------------------------------------------------------------------------------------------
+
+echo(BLUE, "Removing .laux files...")
+
+recursive_delete_laux(TEMP_DIR)
+
+----------------------------------------------------------------------------------------------
+--* Create .build-note
+----------------------------------------------------------------------------------------------
+
+echo(BLUE, "Creating .build-note...")
+
+do
+	local file = io.open(TEMP_DIR .. "/.build-note", "w")
+
+	file:write("Thank you for building the mod via lua, yanzari appreciates it.\n\n")
+	file:write("—Yanzari\n")
+
+	file:close()
 end
 
-local function F_CleanTemp()
-    F_Echo("Cleaning temporary files...", "")
-    F_RemoveDirectory(TEMP_DIR)
+----------------------------------------------------------------------------------------------
+--* Create Maketype.lua
+----------------------------------------------------------------------------------------------
+
+echo(BLUE, "Creating Maketype.lua (" .. BUILD_TYPE .. ")...")
+
+do
+	local file = io.open(TEMP_DIR .. "/Lua/Maketype.lua", "w")
+
+	file:write("local YMP = YanzMoPoly\n")
+
+	if BUILD_TYPE == "debug" then
+		file:write('YMP.BuildType = {build="Debug",compmod="lua"}\n')
+	else
+		file:write('YMP.BuildType = {build="Release",compmod="lua"}\n')
+	end
+
+	file:close()
 end
 
-local function F_TargetRelease()
-    F_CreateDirectory(BUILD_DIR)
-    F_CreateDirectory(TEMP_DIR)
-    F_CopySrc()
-    F_CreateCompilationNote(TEMP_DIR)
-    F_CreateBuildIdentificationFile(TEMP_DIR, "release")
-    F_CreateZip(TEMP_DIR, OUTPUT)
-    F_CleanTemp()
-    F_Echo("✓ The compilation was completed successfully.", "")
-    F_Echo("Output: " .. OUTPUT, "")
-    F_Echo("Build Type: release", "")
-    F_Echo("Build Tool: Build.lua", "")
-    F_Echo("File Made By Yanzari", "")
+----------------------------------------------------------------------------------------------
+--* Create PK3
+----------------------------------------------------------------------------------------------
+
+echo(BLUE, "Creating PK3 archive...")
+
+local zip_command =
+	string.format(
+		'cd "%s" && zip -qr "../../%s" .',
+		TEMP_DIR,
+		OUTPUT
+	)
+
+local zip_result = os.execute(zip_command)
+
+if zip_result ~= 0 and zip_result ~= true then
+	echo(RED, "Failed to create PK3!")
+	os.exit(1)
 end
 
-local function F_TargetDebug()
-    F_CreateDirectory(BUILD_DIR)
-    F_CreateDirectory(TEMP_DIR)
-    F_CopySrc()
-    F_CreateCompilationNote(TEMP_DIR)
-    F_CreateBuildIdentificationFile(TEMP_DIR, "debug")
-    F_CreateZip(TEMP_DIR, OUTPUT)
-    F_CleanTemp()
-    F_Echo("✓ The compilation was completed successfully.", "")
-    F_Echo("Output: " .. OUTPUT, "")
-    F_Echo("Build Type: debug", "")
-    F_Echo("Build Tool: Build.lua", "")
-    F_Echo("File Made By Yanzari", "")
+echo(GREEN, "✓ Created " .. OUTPUT)
+
+----------------------------------------------------------------------------------------------
+--* Clean Temp
+----------------------------------------------------------------------------------------------
+
+echo(BLUE, "Cleaning temporary files...")
+
+local function recursive_delete(path)
+	for file in lfs.dir(path) do
+		if file ~= "." and file ~= ".." then
+			local fullpath = path .. "/" .. file
+			local attr = lfs.attributes(fullpath)
+
+			if attr.mode == "directory" then
+				recursive_delete(fullpath)
+				lfs.rmdir(fullpath)
+			else
+				os.remove(fullpath)
+			end
+		end
+	end
 end
 
-local function F_Clean()
-    F_Echo("Cleaning build artifacts...", "")
-    if os.rename(OUTPUT, OUTPUT) then
-        os.remove(OUTPUT)
-    end
-    F_Echo("✓ Clean completed", "")
-end
+recursive_delete(TEMP_DIR)
+lfs.rmdir(TEMP_DIR)
 
-local function F_DistClean()
-    F_Clean()
-    F_RemoveDirectory(BUILD_DIR)
-    F_Echo("✓ All build files removed", "")
-end
+----------------------------------------------------------------------------------------------
+--* Final Output
+----------------------------------------------------------------------------------------------
 
-local function F_Info()
-    print("A Tool for Compiling Yanzari's Mo Poly with Lua")
-    print("")
-    print("Available Commands: ")
-    print("  release   - Build in release mode (default)")
-    print("  debug     - Build in debug mode")
-    print("  clean     - Remove PK3 file")
-    print("  distclean - Remove all build files")
-    print("  info      - Show this information")
-end
+echo(GREEN, "✓ The compilation was completed successfully.")
+echo(YELLOW, "Output: " .. OUTPUT)
+echo(BLUE, "Build Type: " .. BUILD_TYPE)
+echo(BLUE, "Build Tool: lua")
+echo(BLUE, "File Made By Yanzari")
 
---$ Main
-local arg = arg or {}
-local cmd = arg[1] or "release"
-
-if cmd == "release" then
-    F_TargetRelease()
-elseif cmd == "debug" then
-    F_TargetDebug()
-elseif cmd == "clean" then
-    F_Clean()
-elseif cmd == "distclean" then
-    F_DistClean()
-elseif cmd == "info" then
-    F_Info()
-else
-    F_Usage()
-end
-
---*End*--*Build.lua*--
+----------------------------------------------------------------------------------------------
+--* End*--*Build.lua
+----------------------------------------------------------------------------------------------

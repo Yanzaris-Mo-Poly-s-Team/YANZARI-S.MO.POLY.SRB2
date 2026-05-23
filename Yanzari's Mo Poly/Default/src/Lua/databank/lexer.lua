@@ -1,1077 +1,737 @@
-/*
-             Yanzari's Mo Poly
-                -By Yanzari
--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-
-lexer.lua
-*/
 local Lexer = {}
-local KeyWordsTokens = {
-	["TK_ABORT"] = 1,
-	["TK_ACTION"] = 2,
-	["TK_ADD"] = 3,
-	["TK_AFTER"] = 4,
-	["TK_ALL"] = 5,
-	["TK_ALTER"] = 6,
-	["TK_ALWAYS"] = 7,
-	["TK_ANALYZE"] = 8,
-	["TK_AND"] = 9,
-	["TK_AS"] = 10,
-	["TK_ASC"] = 11,
-	["TK_ATTACH"] = 12,
-	["TK_AUTOINCREMENT"] = 13,
-	["TK_BEFORE"] = 14,
-	["TK_BEGIN"] = 15,
-	["TK_BETWEEN"] = 16,
-	["TK_BY"] = 17,
-	["TK_CASCADE"] = 18,
-	["TK_CASE"] = 19,
-	["TK_CAST"] = 20,
-	["TK_CHECK"] = 21,
-	["TK_COLLATE"] = 22,
-	["TK_COLUMN"] = 23,
-	["TK_COMMIT"] = 24,
-	["TK_CONFLICT"] = 25,
-	["TK_CONSTRAINT"] = 26,
-	["TK_CREATE"] = 27,
-	["TK_CROSS"] = 28,
-	["TK_CURRENT"] = 29,
-	["TK_CURRENT_DATE"] = 30,
-	["TK_CURRENT_TIME"] = 31,
-	["TK_CURRENT_TIMESTAMP"] = 32,
-	["TK_DATABASE"] = 33,
-	["TK_DEFAULT"] = 34,
-	["TK_DEFERRABLE"] = 35,
-	["TK_DEFERRED"] = 36,
-	["TK_DELETE"] = 37,
-	["TK_DESC"] = 38,
-	["TK_DETACH"] = 39,
-	["TK_DISTINCT"] = 40,
-	["TK_DO"] = 41,
-	["TK_DROP"] = 42,
-	["TK_EACH"] = 43,
-	["TK_ELSE"] = 44,
-	["TK_END"] = 45,
-	["TK_ESCAPE"] = 46,
-	["TK_EXCEPT"] = 47,
-	["TK_EXCLUDE"] = 48,
-	["TK_EXCLUSIVE"] = 49,
-	["TK_EXISTS"] = 50,
-	["TK_EXPLAIN"] = 51,
-	["TK_FAIL"] = 52,
-	["TK_FILTER"] = 53,
-	["TK_FIRST"] = 54,
-	["TK_FOLLOWING"] = 55,
-	["TK_FOR"] = 56,
-	["TK_FOREIGN"] = 57,
-	["TK_FROM"] = 58,
-	["TK_FULL"] = 59,
-	["TK_GENERATED"] = 60,
-	["TK_GLOB"] = 61,
-	["TK_GROUP"] = 62,
-	["TK_GROUPS"] = 63,
-	["TK_HAVING"] = 64,
-	["TK_IF"] = 65,
-	["TK_IGNORE"] = 66,
-	["TK_IMMEDIATE"] = 67,
-	["TK_IN"] = 68,
-	["TK_INDEX"] = 69,
-	["TK_INDEXED"] = 70,
-	["TK_INITIALLY"] = 71,
-	["TK_INNER"] = 72,
-	["TK_INSERT"] = 73,
-	["TK_INSTEAD"] = 74,
-	["TK_INTERSECT"] = 75,
-	["TK_INTO"] = 76,
-	["TK_IS"] = 77,
-	["TK_ISNULL"] = 78,
-	["TK_JOIN"] = 79,
-	["TK_KEY"] = 80,
-	["TK_LAST"] = 81,
-	["TK_LEFT"] = 82,
-	["TK_LIKE"] = 83,
-	["TK_LIMIT"] = 84,
-	["TK_MATCH"] = 85,
-	["TK_MATERIALIZED"] = 86,
-	["TK_NATURAL"] = 87,
-	["TK_NO"] = 88,
-	["TK_NOT"] = 89,
-	["TK_NOTHING"] = 90,
-	["TK_NOTNULL"] = 91,
-	["TK_NULL"] = 92,
-	["TK_NULLS"] = 93,
-	["TK_OF"] = 94,
-	["TK_OFFSET"] = 95,
-	["TK_ON"] = 96,
-	["TK_OR"] = 97,
-	["TK_ORDER"] = 98,
-	["TK_OTHERS"] = 99,
-	["TK_OUTER"] = 100,
-	["TK_OVER"] = 101,
-	["TK_PARTITION"] = 102,
-	["TK_PLAN"] = 103,
-	["TK_PRAGMA"] = 104,
-	["TK_PRECEDING"] = 105,
-	["TK_PRIMARY"] = 106,
-	["TK_QUERY"] = 107,
-	["TK_RAISE"] = 108,
-	["TK_RANGE"] = 109,
-	["TK_RECURSIVE"] = 110,
-	["TK_REFERENCES"] = 111,
-	["TK_REGEXP"] = 112,
-	["TK_REINDEX"] = 113,
-	["TK_RELEASE"] = 114,
-	["TK_RENAME"] = 115,
-	["TK_REPLACE"] = 116,
-	["TK_RESTRICT"] = 117,
-	["TK_RETURNING"] = 118,
-	["TK_RIGHT"] = 119,
-	["TK_ROLLBACK"] = 120,
-	["TK_ROW"] = 121,
-	["TK_ROWS"] = 122,
-	["TK_SAVEPOINT"] = 123,
-	["TK_SELECT"] = 124,
-	["TK_SET"] = 125,
-	["TK_TABLE"] = 126,
-	["TK_TEMP"] = 127,
-	["TK_TEMPORARY"] = 128,
-	["TK_THEN"] = 129,
-	["TK_TIES"] = 130,
-	["TK_TO"] = 131,
-	["TK_TRANSACTION"] = 132,
-	["TK_TRIGGER"] = 133,
-	["TK_UNBOUNDED"] = 134,
-	["TK_UNION"] = 135,
-	["TK_UNIQUE"] = 136,
-	["TK_UPDATE"] = 137,
-	["TK_USING"] = 138,
-	["TK_VACUUM"] = 139,
-	["TK_VALUES"] = 140,
-	["TK_VIEW"] = 141,
-	["TK_VIRTUAL"] = 142,
-	["TK_WHEN"] = 143,
-	["TK_WHERE"] = 144,
-	["TK_WINDOW"] = 145,
-	["TK_WITH"] = 146,
-	["TK_WITHOUT"] = 147,
-	["TK_DOMAIN"] = 148, -- PostgreSQL
+Lexer.__index = Lexer
+local KeyWordList = {
+	NonReserved = {
+		ABORT = true,
+		ABSOLUTE = true,
+		ACCESS = true,
+		ACTION = true,
+		ADD = true,
+		ADMIN = true,
+		AFTER = true,
+		AGGREGATE = true,
+		ALSO = true,
+		ALTER = true,
+		ALWAYS = true,
+		ASSERTION = true,
+		ASSIGNMENT = true,
+		AT = true,
+		ATTACH = true,
+		ATTRIBUTE = true,
+		BACKWARD = true,
+		BEFORE = true,
+		BEGIN = true,
+		BETWEEN = true,
+		BIGINT = true,
+		BIT = true,
+		BOOLEAN = true,
+		BY = true,
+		CACHE = true,
+		CALL = true,
+		CALLED = true,
+		CASCADE = true,
+		CASCADED = true,
+		CATALOG = true,
+		CHAIN = true,
+		CHAR = true,
+		CHARACTER = true,
+		CHARACTERISTICS = true,
+		CHECKPOINT = true,
+		CLASS = true,
+		CLOSE = true,
+		CLUSTER = true,
+		COALESCE = true,
+		COLUMNS = true,
+		COMMENT = true,
+		COMMENTS = true,
+		COMMIT = true,
+		COMMITTED = true,
+		CONFIGURATION = true,
+		CONNECTION = true,
+		CONSTRAINTS = true,
+		CONTENT = true,
+		CONTINUE = true,
+		CONVERSION = true,
+		COPY = true,
+		COST = true,
+		CSV = true,
+		CUBE = true,
+		CURRENT = true,
+		CURSOR = true,
+		CYCLE = true,
+		DATA = true,
+		DATABASE = true,
+		DAY = true,
+		DEALLOCATE = true,
+		DEC = true,
+		DECIMAL = true,
+		DECLARE = true,
+		DEFAULTS = true,
+		DEFERRED = true,
+		DEFINER = true,
+		DELETE = true,
+		DELIMITER = true,
+		DELIMITERS = true,
+		DEPENDS = true,
+		DETACH = true,
+		DICTIONARY = true, -- Lzma?
+		DISABLE = true,
+		DISCARD = true,
+		DOCUMENT = true,
+		DOMAIN = true,
+		DOUBLE = true,
+		DROP = true,
+		EACH = true,
+		ENABLE = true,
+		ENCODING = true,
+		ENCRYPTED = true,
+		ENUM = true,
+		ESCAPE = true,
+		EVENT = true,
+		EXCLUDE = true,
+		EXCLUDING = true,
+		EXCLUSIVE = true,
+		EXECUTE = true,
+		EXISTS=true,
+		EXPLAIN=true,
+		EXTENSION=true,
+		EXTERNAL=true,
+		EXTRACT=true,
+		FAMILY = true,
+		FILTER = true,
+		FIRST=true,
+		FLOAT=true,
+		FOLLOWING = true,
+		FORCE = true,
+		FORWARD = true,
+		["FUNCTION"]=true,
+		["FUNCTIONS"]=true,
+		GENERATED=true,
+		GLOBAL=true,
+		GRANTED=true,
+		GREATEST=true,
+		GROUPING=true,
+		GROUPS=true,
+		HANDLER=true,
+		HEADER=true,
+		HOLD=true,
+		HOUR=true,
+		IDENTITY=true,
+		["IF"]=true,
+		IMMEDIATE=true,
+		IMMUTABLE=true,
+		IMPLICIT=true,
+		IMPORT=true,
+		INCLUDE=true,
+		INCLUDING=true,
+		INCREMENT=true,
+		INDEX=true,INDEXES=true,
+		INHERIT=true,INHERITS=true,
+		INLINE=true,
+		INOUT=true,
+		INPUT=true,
+		INSENSITIVE=true,
+		INSERT=true,
+		INSTEAD=true,
+		INT=true,INTEGER=true,
+		INTERVAL=true,
+		INVOKER=true,
+		ISOLATION=true,
+		KEY=true,
+		LABEL=true,
+		LANGUAGE=true,
+		LARGE=true,
+		LAST=true,
+		LEAKPROOF=true,
+		LEAST=true,
+		LEVEL=true,
+		LISTEN=true,
+		LOAD=true,
+		LOCAL=true,
+		LOCATION=true,
+		LOCK=true,
+		LOCKED=true,
+		LOGGED=true,
+		MAPPING=true,
+		MATCH=true,
+		MATERIALIZED=true,
+		MAXVALUE=true,
+		METHOD=true,
+		MINUTE=true,
+		MINVALUE=true,
+		MODE=true,
+		MONTH=true,
+		MOVE=true,
+		NAME=true,NAMES=true,
+		NATIONAL=true,
+		NCHAR=true,
+		NEW=true,
+		NEXT=true,
+		NO=true,
+		NONE=true,
+		NOTHING=true,
+		NOTIFY=true,
+		NOWAIT=true,
+		NULLIF=true,
+		NULLS=true,
+		NUMERIC=true,
+		OBJECT=true,
+		["OF"]=true,
+		OFF=true,
+		OIDS=true,
+		OLD=true,
+		OPERATOR=true,
+		OPTION=true,OPTIONS=true,
+		ORDINALITY=true,
+		OTHERS=true,
+		OUT=true,
+		OVER=true,
+		OVERLAY=true,
+		OVERRIDING=true,
+		OWNED=true,
+		OWNER=true,
+		PARALLEL=true,
+		PARSER=true,
+		PARTIAL=true,
+		PARTITION=true,
+		PASSING=true,
+		PASSWORD=true,
+		PLANS=true,
+		POLICY=true,
+		POSITION=true,
+		PRECEDING=true,
+		PRECISION=true,
+		PREPARE=true,PREPARED=true,
+		PRESERVE=true,
+		PRIOR=true,
+		PRIVILEGES=true,
+		PROCEDURAL=true,PROCEDURE=true,PROCEDURES=true,
+		PROGRAM=true,
+		PUBLICATION=true,
+		QUOTE=true,
+		RANGE=true,
+		READ=true,
+		REAL=true,
+		REASSIGN=true,
+		RECHECK=true,
+		RECURSIVE=true,
+		REF=true,
+		REFERENCING=true,
+		REFRESH=true,
+		REINDEX=true,
+		RELATIVE=true,
+		RELEASE=true,
+		RENAME=true,
+		REPEATABLE=true,
+		REPLACE=true,
+		REPLICA=true,
+		RESET=true,
+		RESTART=true,
+		RESTRICT=true,
+		RETURNS=true,
+		REVOKE=true,
+		ROLE=true,
+		ROLLBACK=true,
+		ROLLUP=true,
+		ROUTINE=true,
+		ROUTINES=true,
+		ROW=true,ROWS=true,
+		RULE=true,
+		SAVEPOINT=true,
+		SCHEMA=true,SCHEMAS=true,
+		SCROLL=true,
+		SEARCH=true,
+		SECOND=true,
+		SECURITY=true,
+		SEQUENCE=true,
+		SEQUENCES=true,
+		SERIALIZABLE=true,
+		SERVER=true,
+		SESSION=true,
+		SET=true,SETOF=true,SETS=true,
+		SHARE=true,
+		SHOW=true,
+		SIMPLE=true,
+		SKIP=true,
+		SMALLINT=true,
+		SNAPSHOT=true,
+		SQL=true,
+		STABLE=true,
+		STANDALONE=true,
+		START=true,
+		STATEMENT=true,
+		STATISTICS=true,
+		STDIN=true,
+		STDOUT=true,
+		STORAGE=true,
+		STORED=true,
+		STRICT=true,
+		STRIP=true,
+		SUBSCRIPTION=true,
+		SUBSTRING=true,
+		SUPPORT=true,
+		SYSID=true,
+		SYSTEM=true,
+		TABLES=true,
+		TABLESPACE=true,
+		TEMP=true,TEMPLATE=true,TEMPORARY=true,
+		TEXT=true,
+		TIES=true,
+		TIME=true,
+		TIMESTAMP=true,
+		TRANSACTION=true,
+		TRANSFORM=true,
+		TREAT=true,
+		TRIGGER=true,
+		TRIM=true,
+		TRUNCATE=true,
+		TRUSTED=true,
+		TYPE=true,TYPES=true,
+		UNBOUNDED=true,
+		UNCOMMITTED=true,
+		UNENCRYPTED=true,
+		UNKNOWN=true,
+		UNLISTEN=true,
+		UNLOGGED=true,
+		["UNTIL"]=true,
+		UPDATE=true,
+		VACUUM=true,
+		VALID=true,
+		VALIDATE=true,
+		VALIDATOR=true,
+		VALUE=true,
+		VALUES=true,
+		VARCHAR=true,
+		VARYING=true,
+		["VERSION"]=true,
+		VIEW=true,VIEWS=true,
+		VOLATILE=true,
+		WHITESPACE=true,
+		WITHIN=true,
+		WITHOUT=true,
+		WORK=true,
+		WRAPPER=true,
+		WRITE=true,
+		YMP=true,
+		YEAR=true,
+		YES=true,
+		ZONE=true
+	},
+	Reserved = {
+		ALL = true,
+		ANALYSE = true,
+		ANALYZE = true,
+		AND = true,
+		ANY = true,
+		ARRAY = true,
+		AS = true,
+		ASC = true,
+		ASYMMETRIC = true,
+		AUTHORIZATION = true,
+		BINARY = true,
+		BOTH = true,
+		CASE = true,
+		CAST = true,
+		CHECK = true,
+		COLLATE = true,
+		COLLATION = true,
+		COLUMN = true,
+		CONCURRENTLY = true,
+		CONFLICT = true,
+		CONSTRAINT = true,
+		COS = true, -- Extra
+		CREATE = true,
+		CROSS = true,
+		CURRENT_CATALOG = true,
+		CURRENT_DATE = true,
+		CURRENT_ROLE = true,
+		CURRENT_SCHEMA = true,
+		CURRENT_TIME = true,
+		CURRENT_TIMESTAMP = true,
+		CURRENT_USER = true,
+		DEFAULT = true,
+		DEFERRABLE = true,
+		DESC = true,
+		DISTINCT = true,
+		["DO"] = true,
+		["ELSE"] = true,
+		["END"] = true,
+		["EXCEPT"] = true,
+		["FALSE"]=true,
+		FETCH = true,
+		["FOR"]=true,
+		FOREIGN=true,
+		FREEZE=true,
+		["FROM"]=true,
+		FULL=true,
+		GRANT=true,
+		GROUP=true,
+		HAVING=true,
+		ILIKE=true,
+		["IN"]=true,
+		INITIALLY=true,
+		INNER=true,
+		INTERSECT=true,
+		INTO=true,
+		["IS"]=true,["ISNULL"]=true,
+		JOIN=true,
+		LATERAL=true,
+		LEADING=true,
+		LEFT=true,
+		LIKE=true,
+		LIMIT=true,
+		LOCALTIME=true,
+		LOCALTIMESTAMP=true,
+		NATURAL=true,
+		["NOT"]=true,
+		NOTNULL=true,
+		NULL=true,
+		OFFSET=true,
+		["ON"]=true,
+		ONLY=true,
+		["OR"]=true,
+		["ORDER"]=true,
+		OUTER=true,
+		OVERLAPS=true,
+		PLACING=true,
+		PRIMARY=true,
+		REFERENCES=true,
+		RETURNING=true,
+		RIGHT=true,
+		SELECT=true,
+		SESSION_USER=true,
+		SIMILAR=true,
+		SIN=true, -- Extra
+		SOME=true,
+		SYMMETRIC=true,
+		TABLE=true,
+		TABLESAMPLE=true,
+		TAN=true,
+		THEN=true,
+		TO=true,
+		TRAILING=true,
+		TRUE=true,
+		UNION=true,
+		UNIQUE=true,
+		USER=true,
+		USING=true,
+		VARIADIC=true,
+		VERBOSE=true,
+		WHEN=true,
+		WHERE=true,
+		WINDOW=true,
+		["WITH"]=true
+	}
 }
-local Tokens = {
-	-- types
-	["TK_EOF"] = 0,
-	["TK_STRING"] = 1,
-	["TK_NUMBER"] = 2,
-	["TK_FLOAT"] = 3,
-	["TK_BLOB"] = 4,
-	["TK_HEXA"] = 5,
-	["TK_KEYWORD"] = 6,
-	["TK_ID"] = 7,
-	["TK_OPERATOR"] = 8,
-	["TK_VAR"] = 9,
-	
-	-- parens
-	["TK_LP"] = 10,
-	["TK_RP"] = 11,
-	
-	-- misc
-	["TK_DOT"] = 12,
-	["TK_SEMI"] = 13,
-	["TK_COMMA"] = 14,
-	["TK_COMMAND"] = 15 -- new
+local TokenType = {
+	["TEXT"]=true,
+	["REAL"]=true,
+	["INT"]=true,
+	["HEX"]=true,
+	["BLOB"]=true,
+	["KEYWORD"]=true,
+	["ID"]=true,
+	["OPERATOR"]=true,
+	["VAR"]=true,
+	["LP"]=true,
+	["RP"]=true,
+	["LB"]=true,
+	["RB"]=true,
+	["DOT"]=true,
+	["SEMI"]=true,
+	["COMMA"]=true
 }
-function Lexer.New(str)
-	if not (str ~= ""
-	and str ~= nil
-	and type(str) == "string") then
-		error("SQL <Lexer> Error: Invalid Input")
-	end
-	local self = setmetatable({},{__index=Lexer})
-	self.tokens = {}
+local Whitespace={
+	[" "]=false,
+	["\t"]=false,
+	["\n"]=true,
+	["\r"]=true,
+	["\f"]=false,
+	["\v"]=false
+}
+function Lexer.new(str)
+	local self = setmetatable({},Lexer)
+	self.input = str
+	self.current = str:sub(1,1)
+	self.next = str:sub(2,2)
+	self.pos = 1
 	self.line = 1
 	self.col = 1
-	self.pos = 1
-	self.current = string.sub(str,self.pos,self.pos)
-	self.next = string.sub(str,self.pos+1,self.pos+1)
-	self.inp = str
+	self.startbuffing = nil
 	self.token = {}
+	self.output = {}
+	self.size = #str
 	return self
 end
-function Lexer:Emit(tk,arg1,arg2)
-	local token = Tokens[tk]
-	if tk == "TK_KEYWORD" then
-		local keywordname = "TK_"..string.upper(arg1)
-		table.insert(self.tokens,{token=token,keyword=KeyWordsTokens[keywordname],text=arg2})
-		return
-	end
-	if arg1 ~= nil then
-		table.insert(self.tokens,{token=token,text=arg1})
-		return
-	end
-	table.insert(self.tokens,{token=token})
-	return
-end
-function Lexer:Error(tx)
-	error("SQL <Lexer> Error at '"..self.line.."|"..self.col.."|"..self.current.."': "..tx)
-	return
-end
-function Lexer:Flush()
-	local result = table.concat(self.token,"")
-	self.token = {}
-	return result
-end
-function Lexer:InsertToken(tkn)
-	self.token[#self.token+1] = tkn
-end
-function Lexer:EOF()
-	if (self.pos > #self.inp) then
+function Lexer:IsEOF()
+	if self.pos > self.size then
 		return true
 	end
 	return false
 end
-function Lexer:Advance()
-	if self.current == "\n" then
+function Lexer:Error(str)
+	error("SQL <Lexer> Error: '"..str.."' At "..self:IsEOF() and "EOS" or ("Col: "..self.col..", Line: "..self.line)..".")
+	return
+end
+function Lexer:Advance(offset)
+	offset = offset or 1
+	if Whitespace[self.current]==true then
+		self.pos = self.pos+offset
+		self.current = self.input:sub(self.pos,self.pos)
+		self.next = self.input:sub(self.pos+1,self.pos+1)
 		self.line = self.line + 1
 		self.col = 1
-		self.pos = self.pos + 1
-		if self:EOF()==true then
-			self.current = ""
-			self.next = ""
+	else
+		self.pos = self.pos+offset
+		self.current = self.input:sub(self.pos,self.pos)
+		self.next = self.input:sub(self.pos+1,self.pos+1)
+		self.col = self.col + 1
+	end
+end
+function Lexer:Peek(offset,limit)
+	offset = offset or 1
+	return self.input:sub(self.pos+offset,limit and self.pos+limit or self.pos+offset)
+end
+function Lexer:BackPeek(offset,limit)
+	offset = offset or 1
+	return self.input:sub(self.pos-offset,limit and self.pos-limit or self.pos-offset)
+end
+function Lexer:Match(str)
+	return self.input:sub(self.pos,self.pos+#str-1)==str
+end
+function Lexer:Insert(c)
+	table.insert(self.token,c or self.current)
+	self.startbuffing = self.startbuffing or {
+		line = self.line,
+		col = self.col
+	}
+	return
+end
+function Lexer:InsertPeek(limit)
+	table.insert(self.token,self.input:sub(self.pos,self.pos+limit))
+	self.startbuffing = self.startbuffing or {
+		line = self.line,
+		col = self.col
+	}
+	return
+end
+function Lexer:Emit(type,isreserved)
+	if TokenType[type] ~= true then
+		self:Error("This Type Don't Exists: "..type)
+	end
+	local ref = self.token
+	self.token = {}
+	if isreserved==true then
+		if ref~=nil then
+			table.insert(self.output,{
+				type = type,
+				reserved=true,
+				token = table.concat(ref),
+				start = self.startbuffing
+			})
 		else
-			self.current = string.sub(self.inp,self.pos,self.pos)
-			self.next = string.sub(self.inp,self.pos+1,self.pos+1)
+			table.insert(self.output,{
+				type = type,
+				reserved=true,
+				start = self.startbuffing
+			})
+		end
+	elseif isreserved==false then
+		if ref~=nil then
+			table.insert(self.output,{
+				type = type,
+				reserved=false,
+				token = table.concat(ref),
+				start = self.startbuffing
+			})
+		else
+			table.insert(self.output,{
+				type = type,
+				reserved=false,
+				start = self.startbuffing
+			})
 		end
 	else
-		self.pos = self.pos + 1
-		self.col = self.col + 1
-		self.current = string.sub(self.inp,self.pos,self.pos)
-		self.next = string.sub(self.inp,self.pos+1,self.pos+1)
-		if self:EOF()==true then
-			self.current = ""
-			self.next = ""
+		if ref~=nil then
+			table.insert(self.output,{
+				type = type,
+				token = table.concat(ref),
+				start = self.startbuffing
+			})
 		else
-			self.current = string.sub(self.inp,self.pos,self.pos)
-			self.next = string.sub(self.inp,self.pos+1,self.pos+1)
+			table.insert(self.output,{
+				type = type,
+				start = self.startbuffing
+			})
 		end
 	end
+	self.startbuffing = nil
+	return
 end
-function Lexer:WhiteSpace()
-	if (self.current == "\n"
-	or self.current == "\t"
-	or self.current == "\r"
-	or self.current == " ") then
+function Lexer:IsHexa()
+	local valid = {
+		["A"]=true,
+		["B"]=true,
+		["C"]=true,
+		["D"]=true,
+		["E"]=true,
+		["F"]=true,
+		["a"]=true,
+		["b"]=true,
+		["c"]=true,
+		["d"]=true,
+		["e"]=true,
+		["f"]=true,
+		["0"]=true,
+		["1"]=true,
+		["2"]=true,
+		["3"]=true,
+		["4"]=true,
+		["5"]=true,
+		["6"]=true,
+		["7"]=true,
+		["8"]=true,
+		["9"]=true
+	}
+	if valid[self.current]==true then
 		return true
 	end
 	return false
 end
-function Lexer:JumpWhiteSpace()
-	if (self.current == "\n"
-	or self.current == "\t"
-	or self.current == "\r"
-	or self.current == " ") then
-		self:Advance()
-		return true
-	end
-	return false
-end
-function Lexer:Alphabetic()
-	if self:EOF()==true then return false end
-	if (string.byte(string.upper(self.current)) >= string.byte("A")
-	and string.byte(string.upper(self.current)) <= string.byte("Z")) or self.current == "_" or
-	(string.byte(string.upper(self.current)) >= 127) then
-		return true
-	end
-	return false
-end
-function Lexer:Numeric()
-	if self:EOF()==true then return false end
-	if (string.byte(string.upper(self.current)) >= string.byte("0")
-	and string.byte(string.upper(self.current)) <= string.byte("9")) then
-		return true
-	end
-	return false
-end
-function Lexer:IsHexadecimal()
-	if self:EOF()==true then return false end
-	if (string.byte(string.upper(self.current)) >= string.byte("0")
-	and string.byte(string.upper(self.current)) <= string.byte("9"))
-	or (string.byte(string.upper(self.current)) >= string.byte("A")
-	and string.byte(string.upper(self.current)) <= string.byte("F")) then
-		return true
-	end
-	return false
-end
-function Lexer:OnlyAlphabetic()
-	if self:EOF()==true then return false end
-	if (string.byte(string.upper(self.current)) >= string.byte("A")
-	and string.byte(string.upper(self.current)) <= string.byte("Z")) then
+function Lexer:IsOctal()
+	local valid = {
+		["0"]=true,
+		["1"]=true,
+		["2"]=true,
+		["3"]=true,
+		["4"]=true,
+		["5"]=true,
+		["6"]=true,
+		["7"]=true
+	}
+	if valid[self.current]==true then
 		return true
 	end
 	return false
 end
 function Lexer:String()
-	if self.current == "'" then
-		self:Advance()
+	if self:Match("'") then
+		self:Advance(2)
 		while true do
-			if (self:EOF()) then
-				self:Error("UnTermined String")
+			if self:IsEOF() then self:Error("Untermined String") end
+			if self:Match("''") then
+				self:Insert("'")
+				self:Advance(2)
+			end
+			if self:Match("'") then
+				self:Advance()
 				break
 			end
-			if self.current == "'" then
-				if self.next == "'" then
-					self:InsertToken("'")
+			self:Insert()
+			self:Advance()
+		end
+		self:Emit("TEXT")
+		return
+	elseif self:Match("$") then
+		self:Advance()
+		local tag = {}
+		while true do
+			if self:IsEOF() then self:Error("Untermined String") end
+			if self:Match("$") then
+				table.insert(tag,"$")
+				self:Advance()
+				break
+			end
+			table.insert(tag,self.current)
+			self:Advance()
+		end
+		while true do
+			if self:IsEOF() then self:Error("Untermined String") end
+			if self:Match("$") then
+				self:Advance()
+				break
+			end
+			self:Insert()
+			self:Advance()
+		end
+		local tag_str = table.concat(tag)
+		if self:Match(tag_str)==false then
+			self:Error("Invalid Tag")
+			return
+		end
+		self:Emit("TEXT")
+		return
+	elseif self:Match("E'")
+	or self:Match("e'") then
+		self:Advance(2)
+		while true do
+			if self:IsEOF() then self:Error("Untermined String") end
+			if self:Match("''") then
+				self:Insert("'")
+				self:Advance(2)
+				continue
+			end
+			if self:Match("'") then
+				self:Advance()
+				break
+			end
+			if self:Match("\\") then
+				if self.next=="b" then
+					self:Insert("\b")
 					self:Advance()
+				elseif self.next=="f" then
+					self:Insert("\f")
+					self:Advance()
+				elseif self.next=="n" then
+					self:Insert("\n")
+					self:Advance()
+				elseif self.next=="r" then
+					self:Insert("\r")
+					self:Advance()
+				elseif self.next=="t" then
+					self:Insert("\t")
+					self:Advance()
+				elseif self.next=="x" then
+					local hexanumber = {}
+					if self:IsHexa() then
+						table.insert(hexanumber,self.current)
+						self:Advance()
+						if self:IsHexa() then
+							table.insert(hexanumber,self.current)
+							self:Advance()
+						end
+					else
+						self:Error("Invalid Command")
+					end
+					self:Insert(tostring(tonumber(hexanumber,16)))
 					self:Advance()
 				else
-					break
-				end
-			end
-			if self.current == "\\" then
-				self:Advance()
-				self:InsertToken(self:Escape())
-			else
-				self:InsertToken(self.current)
-				self:Advance()
-			end
-		end
-		self:Advance()
-		self:Emit("TK_STRING",self:Flush())
-		return true
-	end
-	return false
-end
-function Lexer:Comment()
-	-- Here we've implemented nested comments.
-	
-	-- It is recommended not to use this for compatibility reasons,
-	-- because the original SQL does not support it,
-	-- but we do support it here.
-	local symbol = nil
-	if (self.current == "-"
-	and self.next == "-") then
-		symbol = "s"
-	end
-	if (self.current == "/"
-	and self.next == "*") then
-		symbol = "l"
-	end
-	if (self.current == "*"
-	and self.next == "/") then
-		self:Error("Comment depth corrupted")
-		return false
-	end
-	if symbol == nil then
-		return false
-	end
-	self:Advance() -- - or /
-	self:Advance() -- - or *
-	
-	local depth = 1
-	
-	if symbol == "s" then
-		while true do
-			if self:EOF() == true then
-				break
-			end
-			if self.current == "\n" then
-				self:Advance() -- \n
-				return true
-			end
-			self:Advance()
-		end
-		return true
-	end
-	
-	while true do
-		if (self:EOF()) then
-			self:Error("UnTermined Comment")
-			break
-		end
-		
-		if self.current == "/"
-		and self.next == "*" then
-			depth = depth + 1
-			self:Advance() -- /
-			self:Advance() -- *
-		elseif self.current == "*"
-		and self.next == "/" then
-			depth = depth - 1
-			self:Advance() -- *
-			self:Advance() -- /
-			if depth == 0 then
-				break
-			end
-		else
-			self:Advance()
-		end
-	end
-	return true
-end
-function Lexer:Operator()
-	if self.current == "-"
-	and self.next == ">" then
-		self:InsertToken(self.current)
-		self:Advance()
-		if self.next == ">" then
-			self:InsertToken(self.current)
-			self:Advance()
-		end
-		self:InsertToken(self.current)
-		self:Advance()
-		self:Emit("TK_OPERATOR",self:Flush())
-		return true
-	end
-	
-	--PostgreSQL
-	if self.current == "!"
-	and self.next == "~" then
-		self:InsertToken(self.current)
-		self:Advance()
-		if self.next == "*" then
-			self:InsertToken(self.current)
-			self:Advance()
-		end
-		self:InsertToken(self.current)
-		self:Advance()
-		self:Emit("TK_OPERATOR",self:Flush())
-		return true
-	end
-	
-	if self.current == "<"
-	and self.next == ">" then
-		self:InsertToken(self.current)
-		self:Advance()
-		self:InsertToken(self.current)
-		self:Advance()
-		self:Emit("TK_OPERATOR",self:Flush())
-		return true
-	end
-	if self.current == ">"
-	and self.next == "=" then
-		self:InsertToken(self.current)
-		self:Advance()
-		self:InsertToken(self.current)
-		self:Advance()
-		self:Emit("TK_OPERATOR",self:Flush())
-		return true
-	end
-	if self.current == "<"
-	and self.next == "=" then
-		self:InsertToken(self.current)
-		self:Advance()
-		self:InsertToken(self.current)
-		self:Advance()
-		self:Emit("TK_OPERATOR",self:Flush())
-		return true
-	end
-	if self.current == "="
-		self:InsertToken(self.current)
-		self:Advance()
-		if self.next == "=" then
-			self:InsertToken(self.current)
-			self:Advance()
-		end
-		self:Emit("TK_OPERATOR",self:Flush())
-		return true
-	end
-	
-	--PostgreSQL
-	if self.current == "~"
-	and self.next == "*" then
-		self:InsertToken(self.current)
-		self:Advance()
-		self:InsertToken(self.current)
-		self:Advance()
-		self:Emit("TK_OPERATOR",self:Flush())
-		return true
-	end
-	if self.current == "!"
-	and self.next == "~" then
-		self:InsertToken(self.current)
-		self:Advance()
-		self:InsertToken(self.current)
-		self:Advance()
-		self:Emit("TK_OPERATOR",self:Flush())
-		return true
-	end
-	
-	if self.current == "<"
-	and self.next == "<" then
-		self:InsertToken(self.current)
-		self:Advance()
-		self:InsertToken(self.current)
-		self:Advance()
-		self:Emit("TK_OPERATOR",self:Flush())
-		return true
-	end
-	if self.current == ">"
-	and self.next == ">" then
-		self:InsertToken(self.current)
-		self:Advance()
-		self:InsertToken(self.current)
-		self:Advance()
-		self:Emit("TK_OPERATOR",self:Flush())
-		return true
-	end
-	if self.current == "!"
-	and self.next == "=" then
-		self:InsertToken(self.current)
-		self:Advance()
-		self:InsertToken(self.current)
-		self:Advance()
-		self:Emit("TK_OPERATOR",self:Flush())
-		return true
-	end
-	if self.current == "|"
-	and self.next == "|" then
-		self:InsertToken(self.current)
-		self:Advance()
-		self:InsertToken(self.current)
-		self:Advance()
-		self:Emit("TK_OPERATOR",self:Flush())
-		return true
-	end
-	
-	-- bitwise
-	if self.current == "&" then
-		self:InsertToken(self.current)
-		self:Advance()
-		self:Emit("TK_OPERATOR",self:Flush())
-		return true
-	end
-	if self.current == "|" then
-		self:InsertToken(self.current)
-		self:Advance()
-		self:Emit("TK_OPERATOR",self:Flush())
-		return true
-	end
-	if self.current == "~" then
-		self:InsertToken(self.current)
-		self:Advance()
-		self:Emit("TK_OPERATOR",self:Flush())
-		return true
-	end
-	-- Operators
-	if self.current == "+" then
-		self:InsertToken(self.current)
-		self:Advance()
-		self:Emit("TK_OPERATOR",self:Flush())
-		return true
-	end
-	if self.current == "-" then
-		self:InsertToken(self.current)
-		self:Advance()
-		self:Emit("TK_OPERATOR",self:Flush())
-		return true
-	end
-	if self.current == "*" then
-		self:InsertToken(self.current)
-		self:Advance()
-		self:Emit("TK_OPERATOR",self:Flush())
-		return true
-	end
-	if self.current == "/" then
-		self:InsertToken(self.current)
-		self:Advance()
-		self:Emit("TK_OPERATOR",self:Flush())
-		return true
-	end
-	if self.current == ">" then
-		self:InsertToken(self.current)
-		self:Advance()
-		self:Emit("TK_OPERATOR",self:Flush())
-		return true
-	end
-	if self.current == "<" then
-		self:InsertToken(self.current)
-		self:Advance()
-		self:Emit("TK_OPERATOR",self:Flush())
-		return true
-	end
-	if self.current == "%" then
-		self:InsertToken(self.current)
-		self:Advance()
-		self:Emit("TK_OPERATOR",self:Flush())
-		return true
-	end
-	-- Paren
-	if self.current == "(" then
-		self:InsertToken(self.current)
-		self:Advance()
-		self:Flush()
-		self:Emit("TK_LP")
-		return true
-	end
-	if self.current == ")" then
-		self:InsertToken(self.current)
-		self:Advance()
-		self:Flush()
-		self:Emit("TK_RP")
-		return true
-	end
-	-- misc
-	if self.current == "." then
-		self:InsertToken(self.current)
-		self:Advance()
-		self:Flush()
-		self:Emit("TK_DOT")
-		return true
-	end
-	if self.current == ";" then
-		self:InsertToken(self.current)
-		self:Advance()
-		self:Flush()
-		self:Emit("TK_SEMI")
-		return true
-	end
-	if self.current == "," then
-		self:InsertToken(self.current)
-		self:Advance()
-		self:Flush()
-		self:Emit("TK_COMMA")
-		return true
-	end
-	return false
-end
-function Lexer:Hexadecimal()
-	-- Why does this only work with "0x"? Why not "1x"?
-	if self.current == "0"
-	and (self.next == "x"
-	or self.next == "X") then
-		self:Advance()
-		self:Advance()
-		if self:IsHexadecimal()==true then
-			while true do
-				if self:EOF() then break end
-				if self:WhiteSpace() then break end
-				if self:IsHexadecimal()==false then self:Error("Invalid Hexadecimal") end
-				self:InsertToken(self.current)
-				self:Advance()
-			end
-		else
-			-- Why have "0x" only?
-			self:Error("Invalid Hexadecimal")
-		end
-		-- VDBE is the one who resolves this.
-		self:Emit("TK_HEXA",tonumber(self:Flush()))
-		return true
-	end
-	return false
-end
-function Lexer:Blob()
-	if (self.current == "x"
-	or self.current == "X")
-	and self.next == "'" then
-		self:Advance()
-		self:Advance()
-		local count = 0
-		while true do
-			if self.current=="'" then break end
-			if self:EOF() then self:Error("Invalid Blob") end
-			if self:IsHexadecimal()==false then self:Error("Invalid Blob") end
-			self:InsertToken(self.current)
-			self:Advance()
-			count = count + 1
-		end
-		if self.next=="'" then
-			self:Error("Invalid Blob")
-		end
-		if (count % 2) ~= 0 then
-			-- I would treat it as character + 0, but that makes it incompatible with sqlite3,
-			-- so I'll just throw an error.
-			self:Error("Odd length in blob")
-		end
-		local function tobytes(s)
-			local bytes = {}
-			for i = 1, #s, 2 do
-				local par = s:sub(i, i+1)
-				local value = tonumber(par, 16)
-				if value == nil then
-					self:Error("Invalid hexadecimal byte")
-				end
-				table.insert(bytes, value)
-			end
-			return bytes
-		end
-		self:Advance()
-		
-		local result = tobytes(self:Flush())
-		self:Emit("TK_BLOB",result)
-		return true
-	end
-	return false
-end
-function Lexer:Number()
-	local function exp()
-		if self.current == "e" or self.current == "E" then
-			self:InsertToken(self.current)
-			self:Advance()
-			if self.current == "-"
-			or self.current == "+" then
-				self:InsertToken(self.current)
-				self:Advance()
-			end
-			if self:Numeric() == true then
-				while true do
-					if self:Numeric()~=true then break end
-					self:InsertToken(self.current)
+					local hexanumber = {}
+					if self:IsOctal() then
+						table.insert(hexanumber,self.current)
+						self:Advance()
+						if self:IsOctal() then
+							table.insert(hexanumber,self.current)
+							self:Advance()
+							if self:IsOctal() then
+								table.insert(hexanumber,self.current)
+								self:Advance()
+							end
+						end
+					else
+						self:Error("Invalid Command")
+					end
+					self:Insert(tostring(tonumber(hexanumber,8)))
 					self:Advance()
 				end
-			else
-				self:Error("Invalid Exponent")
+				continue
 			end
-			return true
-		end
-		return false
-	end
-	if self:Numeric()~=true then
-		if self.current == "." then
-			self:InsertToken(self.current)
-			self:Advance()
-			if self:Numeric()==true then
-				while true do
-					if self:Numeric()~=true then break end
-					self:InsertToken(self.current)
-					self:Advance()
-				end
-			else
-				self:Flush()
-				self:Emit("TK_DOT")
-				return true
-			end
-			exp()
-			self:Emit("TK_FLOAT",self:Flush())
-			return true
-		end
-		return false
-	end
-	while true do
-		if self:Numeric()~=true then break end
-		self:InsertToken(self.current)
-		self:Advance()
-	end
-	local a_exp = exp()
-	if a_exp == true and self.current == "." then
-		self:Error("Invalid Float")
-	end
-	if a_exp == false and self.current == "." then
-		self:InsertToken(self.current)
-		self:Advance()
-		if self:Numeric()==true then -- self:NextNumeric is Wrong
-			while true do
-				if self:Numeric()~=true then break end
-				self:InsertToken(self.current)
-				self:Advance()
-			end
-			exp()
-		end
-		self:Emit("TK_FLOAT",self:Flush())
-		return true
-	end
-	if a_exp == false then
-		self:Emit("TK_NUMBER",self:Flush())
-	else
-		self:Emit("TK_FLOAT",self:Flush())
-	end
-	return true
-end
-function Lexer:Keyword()
-	return self:Identifier()
-end
-function Lexer:UTF8(cp)
-	if type(cp) ~= "number" then
-		self:Error("Invalid Unicode codepoint type")
-	end
-	if cp < 0 then
-		self:Error("Negative Unicode codepoint")
-	end
-	if cp > 0x10FFFF then
-		self:Error("Unicode codepoint out of range")
-	end
-	if cp >= 0xD800 and cp <= 0xDFFF then
-		self:Error("UTF-16 surrogate halves are invalid Unicode scalar values")
-	end
-	if cp <= 0x7F then
-		return string.char(cp)
-	end
-	if cp <= 0x7FF then
-		local b1 = 0xC0 + ((cp >> 6) & 0x1F)
-		local b2 = 0x80 + (cp & 0x3F)
-		
-		return string.char(b1, b2)
-	end
-	if cp <= 0xFFFF then
-		local b1 = 0xE0 + ((cp >> 12) & 0x0F)
-		local b2 = 0x80 + ((cp >> 6) & 0x3F)
-		local b3 = 0x80 + (cp & 0x3F)
-		
-		return string.char(b1, b2, b3)
-	end
-	if cp <= 0x10FFFF then
-		local b1 = 0xF0 + ((cp >> 18) & 0x07)
-		local b2 = 0x80 + ((cp >> 12) & 0x3F)
-		local b3 = 0x80 + ((cp >> 6) & 0x3F)
-		local b4 = 0x80 + (cp & 0x3F)
-		return string.char(b1, b2, b3, b4)
-	end
-	self:Error("Failed to encode UTF-8")
-end
-function Lexer:ReadHex(count)
-	local buffer = {}
-	
-	for i = 1, count do
-		if self:IsHexadecimal() ~= true then
-			self:Error("Invalid hexadecimal escape")
-		end
-		
-		buffer[#buffer + 1] = self.current
-		self:Advance()
-	end
-	
-	return table.concat(buffer, "")
-end
-
-function Lexer:Escape()
-	if self.current == "n" then
-		self:Advance()
-		return "\n"
-		
-	elseif self.current == "r" then
-		self:Advance()
-		return "\r"
-		
-	elseif self.current == "t" then
-		self:Advance()
-		return "\t"
-		
-	elseif self.current == "b" then
-		self:Advance()
-		return "\b"
-		
-	elseif self.current == "f" then
-		self:Advance()
-		return "\f"
-		
-	elseif self.current == "v" then
-		self:Advance()
-		return "\v"
-		
-	elseif self.current == "a" then
-		self:Advance()
-		return "\a"
-		
-	elseif self.current == "e" then
-		self:Advance()
-		return string.char(27)
-		
-	elseif self.current == "\\" then
-		self:Advance()
-		return "\\"
-		
-	elseif self.current == "'" then
-		self:Advance()
-		return "'"
-		
-	elseif self.current == '"' then
-		self:Advance()
-		return '"'
-		
-	elseif self.current == "x"
-	or self.current == "X" then
-		
-		self:Advance()
-		
-		local hex = self:ReadHex(2)
-		local value = tonumber(hex, 16)
-		
-		return string.char(value)
-		
-	elseif self.current == "u" then
-		self:Advance()
-		
-		local hex = self:ReadHex(4)
-		local cp = tonumber(hex, 16)
-		
-		return self:UTF8(cp)
-		
-	elseif self.current == "U" then
-		self:Advance()
-		
-		local hex = self:ReadHex(8)
-		local cp = tonumber(hex, 16)
-		
-		return self:UTF8(cp)
-	end
-	self:Error("Invalid escape sequence")
-end
-function Lexer:Identifier()
-	if self:Alphabetic() then
-		while true do
-			if self:Alphabetic() or self:Numeric() or self.current == "$" then
-				self:InsertToken(self.current)
-				self:Advance()
-			else
-				break
-			end
-		end
-		local text = self:Flush()
-		local upper = string.upper(text)
-		if KeyWordsTokens["TK_"..upper] then
-			self:Emit("TK_KEYWORD", upper, text)
-		else
-			self:Emit("TK_ID", text)
-		end
-		return true
-	end
-
-	if self.current == "[" then
-		self:Advance()
-		while true do
-			if self:EOF() then
-				self:Error("Unterminated bracketed identifier")
-			end
-			if self.current == "]" then
-				self:Advance()
-				break
-			end
-			self:InsertToken(self.current)
+			self:Insert()
 			self:Advance()
 		end
-		self:Emit("TK_ID", self:Flush())
-		return true
+		self:Emit("TEXT")
+		return
 	end
-
-	if self.current == '"' then
-		self:Advance()
-		while true do
-			if self:EOF() then
-				self:Error("Unterminated double‑quoted identifier")
-			end
-			if self.current == '"' then
-				if self.next == '"' then
-					self:InsertToken('"')
-					self:Advance()
-					self:Advance()
-				else
-					self:Advance()
-					break
-				end
-			else
-				self:InsertToken(self.current)
-				self:Advance()
-			end
-		end
-		self:Emit("TK_ID", self:Flush())
-		return true
-	end
-
-	if self.current == '`' then
-		self:Advance()
-		while true do
-			if self:EOF() then
-				self:Error("Unterminated grave‑accent identifier")
-			end
-			if self.current == '`' then
-				if self.next == '`' then
-					self:InsertToken('`')
-					self:Advance()
-					self:Advance()
-				else
-					self:Advance()
-					break
-				end
-			else
-				self:InsertToken(self.current)
-				self:Advance()
-			end
-		end
-		self:Emit("TK_ID", self:Flush())
-		return true
-	end
-
-	return false
 end
-function Lexer:Variable()
-	if self.current == "?" then
-		self:InsertToken(self.current)
-		self:Advance()
-		while self:Numeric() do
-			self:InsertToken(self.current)
-			self:Advance()
-		end
-		self:Emit("TK_VAR", self:Flush())
-		return true
-	end
 
-	local prefix = self.current
-	if prefix ~= "$" and prefix ~= "@" and prefix ~= ":" then
-		return false
-	end
-
-	self:InsertToken(prefix)
-	self:Advance()
-
-	local hasName = false
-	while true do
-		if self:EOF() then break end
-		if self:Alphabetic() or self:Numeric() or self.current == "$" then
-			self:InsertToken(self.current)
-			self:Advance()
-			hasName = true
-		elseif self.current == ":" and self.next == ":" then
-			self:InsertToken(":")
-			self:InsertToken(":")
-			self:Advance()
-			self:Advance()
-			hasName = true
-		else
-			break
-		end
-	end
-
-	if not hasName then
-		self:Error("Invalid variable name after '" .. prefix .. "'")
-	end
-
-	if self.current == "(" then
-		self:InsertToken("(")
-		self:Advance()
-		local parenContent = false
-		while not self:EOF() and self.current ~= ")" do
-			if self:WhiteSpace() then
-				self:Error("Unexpected whitespace inside variable parentheses")
-			end
-			self:InsertToken(self.current)
-			self:Advance()
-			parenContent = true
-		end
-		if not parenContent then
-			self:Error("Empty variable parentheses")
-		end
-		if self:EOF() or self.current ~= ")" then
-			self:Error("Unterminated variable parentheses")
-		end
-		self:InsertToken(")")
-		self:Advance()
-	end
-
-	self:Emit("TK_VAR", self:Flush())
-	return true
-end
-function Lexer:Tokenize()
-	while true do
-	if self:EOF()==true then break end
-		if self:String()~=true
-		and self:Comment()~=true
-		and self:Variable()~=true
-		and self:Hexadecimal()~=true
-		and self:Blob()~=true
-		and self:Number()~=true
-		and self:Keyword()~=true
-		and self:Operator()~=true
-		and self:JumpWhiteSpace()~=true then
-			self:Error("Unexpected character")
-		end
-	end
-	self:Emit("TK_EOF")
-	return self.tokens
-end
 return Lexer

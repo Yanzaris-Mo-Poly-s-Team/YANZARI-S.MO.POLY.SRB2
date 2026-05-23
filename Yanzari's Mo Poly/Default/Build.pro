@@ -1,86 +1,175 @@
 #--------------------------------------------------------------------------------------------
 #---*Build.pro
-#---*A Build.pro so you can compile the Mod
-#--*It was designed to be used with qmake.
+#--*A QMake build system so you can compile the Mod
 #--*
-#--*By ヤンザリ(Yanzari)
+#--*By ヤンザリ (Yanzari)
 #--------------------------------------------------------------------------------------------
-#--*Start*--*Build.pro*--
 
-#--*Comment*--*We will not use C/C++ code, only execute build commands*
 TEMPLATE = aux
-CONFIG += release
+CONFIG += no_link
 
-#--*Comment*--*Directories*--
-SRC_DIR  = src  
-BUILD_DIR = build  
+#--$ Project Configuration
+MOD_NAME = SMRFCL_Yanzaris-Mo-Poly
+VERSION = v0.0.1
+OUTPUT = $$MOD_NAME\_$${VERSION}.pk3
+
+#--$ Directory Structure
+SRC_DIR = src
+LUA_DIR = $$SRC_DIR/Lua
+BUILD_DIR = build
 TEMP_DIR = $$BUILD_DIR/temp
 
-#--*Comment*--*Name, Version, and Output*--
-MOD_NAME    = SMRFCL_Yanzaris‑Mo‑Poly  
-VERSION     = v0.0.1  
-OUTPUT      = $$MOD_NAME_$$VERSION.pk3
+#--$ Build Type
+CONFIG(debug, debug|release) {
+    BUILD_TYPE = debug
+} else {
+    BUILD_TYPE = release
+}
 
-ZIP  = zip  
-RM   = rm -rf
-MKDIR = mkdir -p
-ECHO = echo
+#--$ Colors
+GREEN = "\\033[0;32m"
+YELLOW = "\\033[1;33m"
+RED = "\\033[0;31m"
+BLUE = "\\033[0;34m"
+CYAN = "\\033[0;36m"
+NC = "\\033[0m"
 
-#--*Comment*--*defining extra target*--
-QMAKE_EXTRA_TARGETS += prepare_build copy_src create_build_note create_maketype_lua create_zip clean_temp clean distclean
+#--------------------------------------------------------------------------------------------
+#--*Prepare Build
+#--------------------------------------------------------------------------------------------
 
-#--*Comment*--*Functions*--
-# RULE: prepare_build  
-prepare_build.commands = $$MKDIR $$BUILD_DIR $$TEMP_DIR  
-prepare_build.depends =  
-prepare_build.target = prepare_build
+prepare_build.target = prepare-build
+prepare_build.commands = \
+    echo "$$CYAN Creating build directories... $$NC" && \
+    mkdir -p $$BUILD_DIR $$TEMP_DIR
 
-# RULE: copy_src  
-copy_src.commands = $$ECHO Copying source files... && cp -r $$SRC_DIR/* $$TEMP_DIR/ 2>/dev/null || true && $$MKDIR $$TEMP_DIR/Lua  
-copy_src.depends = prepare_build  
-copy_src.target = copy_src
+QMAKE_EXTRA_TARGETS += prepare_build
 
-# RULE: create_build_note  
-create_build_note.commands = $$ECHO Creating .build-note... && ( echo "Thank you for building the mod via qmake, yanzari appreciates it." > $$TEMP_DIR/.build-note )  
-create_build_note.depends = copy_src  
-create_build_note.target = create_build_note
+#--------------------------------------------------------------------------------------------
+#--*Copy Source Files
+#--------------------------------------------------------------------------------------------
 
-# RULE: create_maketype_lua  
-#--*Comment*--*Restricted to Release and Debug*--
-isDebug = $$contains(CONFIG, debug)  
-create_maketype_lua.commands = $$ECHO Creating Maketype.lua... && ( \
-    if [ \"$${isDebug}\" = \"1\" ]; then \
-       echo 'local YMP = YanzMoPoly' > $$TEMP_DIR/Lua/Maketype.lua; \
-       echo 'YMP.BuildType = {build=\"Debug\",compmod=\"qmake\"}' >> $$TEMP_DIR/Lua/Maketype.lua; \
-    else \
-       echo 'local YMP = YanzMoPoly' > $$TEMP_DIR/Lua/Maketype.lua; \
-       echo 'YMP.BuildType = {build=\"Release\",compmod=\"qmake\"}' >> $$TEMP_DIR/Lua/Maketype.lua; \
-    fi )  
-create_maketype_lua.depends = create_build_note  
-create_maketype_lua.target = create_maketype_lua
+copy_src.target = copy-src
+copy_src.depends = prepare-build
+copy_src.commands = \
+    echo "$$BLUE Copying source files... $$NC" && \
+    cp -r $$SRC_DIR/* $$TEMP_DIR/ 2>/dev/null || true && \
+    mkdir -p $$TEMP_DIR/Lua
 
-# RULE: create_zip  
-create_zip.commands = $$ECHO Creating PK3 archive... && cd $$TEMP_DIR && $$ZIP -qr ../../$$OUTPUT . && $$ECHO Created $$OUTPUT  
-create_zip.depends = create_maketype_lua  
-create_zip.target = create_zip
+QMAKE_EXTRA_TARGETS += copy_src
 
-# RULE: clean_temp  
-clean_temp.commands = $$ECHO Cleaning temporary files... && $$RM $$TEMP_DIR  
-clean_temp.depends = create_zip  
-clean_temp.target = clean_temp
+#--------------------------------------------------------------------------------------------
+#--*Compile LAUX
+#--------------------------------------------------------------------------------------------
 
-# RULE: clean (Remove .pk3 file)  
-clean.commands = $$ECHO Cleaning build artifacts... && $$RM $$OUTPUT  
-clean.target = clean
+build_laux.target = build-laux
+build_laux.depends = copy-src
+build_laux.commands = \
+    echo "$$CYAN Compiling recursive .laux files... $$NC" && \
+    lauxc workspace && \
+    find $$TEMP_DIR -type f -name "*.laux" -delete
 
-# RULE: distclean (Clean Everything)  
-distclean.commands = $$ECHO Deep cleaning... && $$RM $$BUILD_DIR  
-distclean.target = distclean
+QMAKE_EXTRA_TARGETS += build_laux
 
-#--*Comment*--*It must be a complete build*--
-build_all.commands = $$MAKEFILE_TARGETS_COPY = prepare_build copy_src create_build_note create_maketype_lua create_zip clean_temp  
-build_all.depends =  
-build_all.target = all
+#--------------------------------------------------------------------------------------------
+#--*Create Build Note
+#--------------------------------------------------------------------------------------------
 
-#--*Note*--*It generates a Makefile*--
-#--*End*--*Build.pro*--
+create_build_note.target = create-build-note
+create_build_note.depends = build-laux
+create_build_note.commands = \
+    echo "$$BLUE Creating .build-note... $$NC" && \
+    echo "Thank you for building the mod via qmake, yanzari appreciates it." > $$TEMP_DIR/.build-note && \
+    echo "" >> $$TEMP_DIR/.build-note && \
+    echo "—Yanzari" >> $$TEMP_DIR/.build-note
+
+QMAKE_EXTRA_TARGETS += create_build_note
+
+#--------------------------------------------------------------------------------------------
+#--*Create Maketype.lua
+#--------------------------------------------------------------------------------------------
+
+create_maketype.target = create-maketype-lua
+create_maketype.depends = create-build-note
+
+CONFIG(debug, debug|release) {
+
+create_maketype.commands = \
+    echo "$$BLUE Creating Maketype.lua (debug)... $$NC" && \
+    echo 'local YMP = YanzMoPoly' > $$TEMP_DIR/Lua/Maketype.lua && \
+    echo 'YMP.BuildType = {build="Debug",compmod="qmake"}' >> $$TEMP_DIR/Lua/Maketype.lua
+
+} else {
+
+create_maketype.commands = \
+    echo "$$BLUE Creating Maketype.lua (release)... $$NC" && \
+    echo 'local YMP = YanzMoPoly' > $$TEMP_DIR/Lua/Maketype.lua && \
+    echo 'YMP.BuildType = {build="Release",compmod="qmake"}' >> $$TEMP_DIR/Lua/Maketype.lua
+
+}
+
+QMAKE_EXTRA_TARGETS += create_maketype
+
+#--------------------------------------------------------------------------------------------
+#--*Create PK3
+#--------------------------------------------------------------------------------------------
+
+create_zip.target = create-zip
+create_zip.depends = create-maketype-lua
+create_zip.commands = \
+    echo "$$BLUE Creating PK3 archive... $$NC" && \
+    cd $$TEMP_DIR && zip -qr ../../$$OUTPUT . && \
+    echo "$$GREEN ✓ Created $$OUTPUT $$NC"
+
+QMAKE_EXTRA_TARGETS += create_zip
+
+#--------------------------------------------------------------------------------------------
+#--*Clean Temp
+#--------------------------------------------------------------------------------------------
+
+clean_temp.target = clean-temp
+clean_temp.depends = create-zip
+clean_temp.commands = \
+    echo "$$BLUE Cleaning temporary files... $$NC" && \
+    rm -rf $$TEMP_DIR
+
+QMAKE_EXTRA_TARGETS += clean_temp
+
+#--------------------------------------------------------------------------------------------
+#--*Main Build
+#--------------------------------------------------------------------------------------------
+
+build_mod.target = all
+build_mod.depends = clean-temp
+build_mod.commands = \
+    echo "$$GREEN ✓ The compilation was completed successfully. $$NC" && \
+    echo "$$YELLOW Output: $$OUTPUT $$NC" && \
+    echo "$$BLUE Build Type: $$BUILD_TYPE $$NC" && \
+    echo "$$BLUE Build Tool: qmake $$NC" && \
+    echo "$$BLUE File Made By Yanzari $$NC"
+
+QMAKE_EXTRA_TARGETS += build_mod
+
+#--------------------------------------------------------------------------------------------
+#--*Clean
+#--------------------------------------------------------------------------------------------
+
+QMAKE_CLEAN += $$OUTPUT
+QMAKE_CLEAN += $$BUILD_DIR
+
+#--------------------------------------------------------------------------------------------
+#--*Info
+#--------------------------------------------------------------------------------------------
+
+message("========================================")
+message("$$MOD_NAME Build System")
+message("========================================")
+message("Version: $$VERSION")
+message("Default Output: $$OUTPUT")
+message("Source Directory: $$SRC_DIR")
+message("Build Directory: $$BUILD_DIR")
+message("Build Tool: qmake")
+
+#--------------------------------------------------------------------------------------------
+#--*End*--*Build.pro
+#--------------------------------------------------------------------------------------------

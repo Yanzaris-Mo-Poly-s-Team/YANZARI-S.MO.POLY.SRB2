@@ -1,0 +1,13 @@
+local database = require("database")
+local ympinfo = require(".root./ymp/info")
+local PGText = database?.types?.text
+
+if database?.pragma then
+	@database.pragma("ymp_version:get")
+	local function ympver(out : PGRet, name_of_info : PGText)
+		local info = ympinfo[name_of_info:GetText()]
+		PGRet:Give(info)
+		return 0
+	end
+end
+return database

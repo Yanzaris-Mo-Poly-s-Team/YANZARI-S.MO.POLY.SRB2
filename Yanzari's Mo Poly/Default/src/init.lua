@@ -164,6 +164,9 @@ local function require(path)
 	
     local env = setmetatable({
         require = require,
+		istable = function(x)
+			return type(x)=="table"
+		end,
 		package = {loaded = ModuleCache,loadedfunc = function() return FuncModuleCache end,now = function() return CurrentLoadedPath end,this = full_path}
     }, {__index = _G})
     setfenv(chunk, env)

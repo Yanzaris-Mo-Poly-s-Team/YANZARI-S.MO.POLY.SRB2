@@ -1,0 +1,6 @@
+{
+  "path": {
+    "input": "./build/temp",
+    "output": "./build/temp"
+  }
+}

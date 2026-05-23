@@ -17,6 +17,9 @@ LUA_DIR = $(SRC_DIR)/Lua
 BUILD_DIR = build
 TEMP_DIR = $(BUILD_DIR)/temp
 
+#--$ Find all .laux files
+LAUX_FILES := $(shell find $(SRC_DIR) -name "*.laux")
+
 #--$ Tools
 ZIP = zip
 RM = rm -rf
@@ -55,12 +58,23 @@ release: prepare-build
 	@$(ECHO) "$(GREEN)Building in RELEASE mode...$(NC)"
 	@$(MAKE) --no-print-directory $(OUTPUT)
 
+#--$ Compile all .laux files recursively
+build-laux:
+	@$(ECHO) "$(CYAN)Compiling recursive .laux files...$(NC)"
+	@lauxc workspace
+	@find $(TEMP_DIR) -type f -name "*.laux" -delete
+
+#--$ Remove .laux source files from temp
+remove-laux:
+	@$(ECHO) "$(BLUE)Removing .laux files...$(NC)"
+	@find $(TEMP_DIR) -name "*.laux" -delete
+
 #--$ Create output directory and prepare for build
 prepare-build:
 	@$(MKDIR) $(BUILD_DIR) $(TEMP_DIR)
 
 #--$ Build the PK3 file
-$(OUTPUT): copy-src create-build-note create-maketype-lua create-zip clean-temp
+$(OUTPUT): copy-src build-laux remove-laux create-build-note create-maketype-lua create-zip clean-temp
 	@$(ECHO) "$(GREEN)✓ The compilation was completed successfully.$(NC)"
 	@$(ECHO) "$(YELLOW)Output: $(OUTPUT)$(NC)"
 	@$(ECHO) "$(BLUE)Build Type: $(BUILD_TYPE)$(NC)"
