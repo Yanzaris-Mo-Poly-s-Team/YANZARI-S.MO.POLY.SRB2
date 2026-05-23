@@ -57,6 +57,8 @@ the [status](#-status) is Current.
 * This mod will be very complex, very cool, and fun;
 it will have many characters and many DLCs.
 
+* This project uses/will use laux because it's good and transpiles to lua.
+
 ### What does Yanzari's Mo Poly mean?
   Yanzari is the creator/one of the creators of the mod.\
   Mo means Mod.\
