@@ -1,7 +1,5 @@
 # ➤ ヤンザリのモ・ポリ (Yanzari's Mo Poly)
 
-![progress](https://progress.rocks/1/)
-
 ---
 ## ➤ Badges
 
@@ -27,20 +25,15 @@ the [status](#-status) is Current.
 	    * [Does it have to do with polygons or high-fidelity sprites?](#does-it-have-to-do-with-polygons-or-high-fidelity-sprites)
 	    * [Is it a modification of the SRB2 source code? The term "Mod" can also mean that.](#is-it-a-modification-of-the-SRB2-source-code-The-term-Mod-can-also-mean-that)
 		* [What are your plans for the mod?](#what-are-your-plans-for-the-mod)
-		* [What else do you plan to include in the mod?](#what-else-do-you-plan-to-include-in-the-mod)
-		* [This shows a bit of scripting for YMKP](#this_shows_a_bit_of_scripting_for_ymkp)
-		* [Do you care about file security?](#do_you_care_about_file_security)
 		* [What is the purpose of this mod?](#what-is-the-purpose-of-this-mod)
 		* [How much storage does it consume?](#how-much-storage-does-it-consume)
 		* [Which languages are supported?](#which_languages_are_supported)
 		* [Will there be a sequel?](#will-there-be-a-sequel)
 		* [Will the mod support other mods?](#will-the-mod-support-other-mods)
-			* [Will there be a Wiki?](#will-there-be-a-wiki)
-			* [Will it support SRB2VR and SRB2Mobile?](#will-it-support-srb2vr-and-srb2mobile)
+		* [Will it support SRB2VR and SRB2Mobile?](#will-it-support-srb2vr-and-srb2mobile)
 		* [Bugs](#bugs)
 	* [➤ Installation](#-installation)
 	* [➤ Contribution](#-contribution)
-	* [➤ Owner?](#-owner)
 	* [➤ How to run it?](#-how-to-run-it)
 	* [➤ Status](#-status)
 	* [➤ Compile](#-compile)
@@ -103,134 +96,6 @@ it will have many characters and many DLCs.
   * I will review the scripts you submit for your contributions.
     * If everything is alright, I will accept.
     * If everything isn't alright, I won't accept it.
- 
-### What else do you plan to include in the mod?
-I plan to put a **lot of stuff** on it, I think the SRB2 will be able to handle it.
-
-* [ ] Custom Character Selection Screen
-* [ ] Customized Credits Screen
-* [ ] Customized Player Setup Screen
-* [ ] Customized Chat
-* [ ] many DLCs
-* [ ] A Command Prompt (using `open_ymp-console`)
-* [ ] Recreating some functions of Lua 5.4
-* Protected Input/Output (I/O)
-  * [ ] Passwords: SHA3
-  * [ ] Encrypted: AES256
-* [ ] SQL Databanks
-* [ ] Classes
-* [ ] A DLC for Yanzari's Mo Poly for compatibility with SRB2 Thokker (the port of SRB2 Thokker to 2.2).
-* [ ] Menus so you don't have to mess with console variables.
-* [ ] Yanzari's Mo Poly Table (`YanzMoPoly`) will no longer be accessible; only YMKP and YMSP will be available.
-* [ ] Yanzari's Modding Kit Poly (YMKP)
-  * ヤンザリの改造キット ポリ
-  * Basically, an SDK (Software Development Kit).
-  * In this case, it's an MDK (Mod Development Kit).
-  * a brief explanation: SDK (Software Development Kit) is a complete set of tools that allows developers to create, test, and integrate applications on a specific platform.
-* [ ] Yanzari's Modding Space Poly (YMSP)
-  * ヤンザリのモッディングスペースポリ
-  * This will be a space where you can put functions, variables, constants, classes, hooks, etc. Everything your mod stores must be in this space.
-  * Example to create: `YMKP:AddSpace(name : string)`
-* [ ] Support for characters from other mods.
-* Among many other things that will make your game good.
-
-### This shows a bit of scripting for YMKP
-This depends on whether **YMKP is fully added**:\
-  - Let's assume that this file is not **init.lua**:
-```lua
--- It will probably only work in the final version.
-local Mod = YMKP:AlocateSpace(spacename : string)
-Mod:Init(function(API)
-  -- when the Space is Loaded
-  -- Example
-  -- You can only use what the API exposes.
-  local DataBankService : Service = self:Require("SQLite3") -- SQLite3
-  local Options : Opt = API:Options({encrypted=true,recovery=true}) /* SEE mode & Recovery mode*/
-  local Databank : DB = DataBankService:Databank(self.id,"rw",Options)
-  local Cursor : DBCursor = Databank.Cursor()
-  local Temp : table = {}
-  local packed : Zip = pack({Temp=Temp})
-  local Exported : nil = self:Export(packed)
-  if Cursor:IsValid()==true then /*Valid?*/
-    -- ...
-  end
-   -- ...
-end)
-    
-Mod:Hook(hook : string,function(API)
-  -- Example
-  -- You can only use what the API exposes.
-  local packed : Zip = self:Import()
-  local Temp : Table = packed:unpack()
-  local Mobjs : MapObjects = API:AllMobj()
-  for Mobj in Mobjs:Iterate() do
-    if Mobj
-    and Mobj:Valid() then
-      -- ...
-    end
-  end
-end)
-
-Mod:Library(function(API)
-    -- Exportable Content
-    -- an example
-    local Module : module = module("MyMod") /* or service("MyService") */
-    local TestClass : class = class("UnConvertedBytes")
-    function TestClass.__init__()
-      -- Private: priv
-      -- Public: self
-      -- Args: args
-      self.msg = str(args.arg[1])
-      return null
-    end
-    function Module.new(message)
-      return TestClass(message)
-    end
-    function Module.message()
-      if class(self) ~= TestClass then warning("Invalid") return end
-      local arg1 : Str = str(self.msg)
-      API:ChatMessage("["..mod.name.."] "..arg1)
-      return null
-    end
-    return Module
-end)
-
-Mod:Exit(function(API)
-  -- When the game performs an action considered to be closed
-  -- an example
-  local ExitType : boolean = API:GetExitType()
-  local MyCustomMod : Module = self:Require("MyMod")
-  if ExitType == true then
-    Module.message("Closing")
-    return
-  else
-    Module.message("ByeBye")
-    return
-  end
-end)
-```
-    
-Get your space back; if you run this while it's private, it returns an error: `local GetMySpace = YMKP:GetSpace(spacename : string)`\
-When the Mod is fully loaded via init.lua, if you want the Space to be private: `YMKP:SetSpacePrivate(spacename : string)`\
-If you want to load the files, we will assume you want to load files using init.lua: `YMKP:LoadFile(path : string)`
-
-And... For God's sake🛐,\
-don't access or modify the YanzMoPoly table,\
-otherwise you'll get an error:\
-  `Yanzari's Mo Poly Error: Do not access or modify me. I have private things. Please access YMKP instead.`
-  
-Use YMKP and YMSP responsibly\
-if they are implemented.😉
-  
-### Do you care about file security?
-Yes, that's why we use\
-AES, sha3, and SQLite3; we don't\
-use only base64 like other modders\
-for security reasons.
-
-Being safe... is good,\
-especially against unwanted\
-and harmful changes.
 
 ### What is the purpose of this mod?
 It's a mod that gets stuck in your memory because it's so good,\
@@ -251,12 +116,6 @@ The sequel will be... MUCH better.
 
 ### Will the mod support other mods?
 **Yes**, full support.
-
-#### Will there be a Wiki?
-I mean... we already have the wiki, it's already being made...\
-or it's already finished, depending on when you've been looking at the wiki.
-
-At the time I am reviewing this, it is still being done.
 
 #### Will it support SRB2VR and SRB2Mobile?
 **yes**, SRB2VR and SRB2Mobile supported Yanzari's Mo Poly, however...\
@@ -302,13 +161,6 @@ You say you want to participate and specify which area of the mod (e.g., scripte
 Wait a moment and we'll add you.
 
 It's very easy and it helps a lot.
-
----
-
-[![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/colored.png)](#owner)
-
-## ➤ Owner?
-Yanzari
 
 ---
 
