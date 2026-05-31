@@ -1,1 +1,1 @@
-local YMKP = require("mdk/init.lua")
+local Nope = {}
