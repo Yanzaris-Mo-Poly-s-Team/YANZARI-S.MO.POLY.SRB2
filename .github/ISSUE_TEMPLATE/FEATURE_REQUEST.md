@@ -1,3 +1,10 @@
+---
+name: Feature Request
+about: Request a feature to be added.
+title: "*Feature* Describe the feature here"
+labels: feature
+---
+
 ## 📃Description
 
 Provide a detailed description of the Feature. (Be clear.)

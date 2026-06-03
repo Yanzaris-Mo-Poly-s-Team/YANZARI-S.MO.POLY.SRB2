@@ -1,3 +1,10 @@
+---
+name: Bug Report
+about: Report a Bug.
+title: "*Bug* Describe the Bug here"
+labels: bug
+---
+
 ## 📃Description
 
 Provide a detailed description of the Issue. (Be clear.)
