@@ -159,3 +159,16 @@ function Lexer:Array()
 	end
 	return true
 end
+
+-- Special Chars
+function Lexer:SpecialChars()
+	if self:Match(":") then
+		self:Insert()
+		self:Emit("COLON")
+	end
+	if self:Match(",") then
+		self:Insert()
+		self:Emit("COMMA")
+	end
+	return true
+end

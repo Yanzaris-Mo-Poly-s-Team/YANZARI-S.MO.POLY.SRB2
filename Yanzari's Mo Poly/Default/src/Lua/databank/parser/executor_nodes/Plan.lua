@@ -32,21 +32,23 @@ local Plan = {}
 Plan.__index = Plan
 function Plan.new(tbl)
 	local self = setmetatable({},Plan)
+	assert(tbl ~= nil)
+	
 	self.node_attr = {
 		"abstract",
 		"no_equal",
 		"no_query_jumble"
 	}
 	
-	self.type = tbl.type or ""
+	self.type = tbl.type or 0
 	
 	self.disabled_nodes = tbl.disabled_nodes or 0
 	
-	self.startup_cost = tbl.startup_cost or nil
-	self.total_cost = tbl.total_cost or nil
+	self.startup_cost = tbl.startup_cost or 0
+	self.total_cost = tbl.total_cost or 0
 	
-	self.plan_rows = tbl.plan_rows
-	self.plan_width = tbl.plan_width
+	self.plan_rows = tbl.plan_rows or 0
+	self.plan_width = tbl.plan_width or 0
 	
 	self.parallel_aware = tbl.parallel_aware or false
 	self.parallel_safe = tbl.parallel_safe or false

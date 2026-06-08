@@ -1,3 +1,4 @@
+local Plan = require("Plan")
 /*
 typedef struct Result
 {
@@ -7,8 +8,8 @@ typedef struct Result
 	Bitmapset  *relids;
 } Result;
 */
-local Return = {}
-Return.__index = Return
+local Result = {}
+Result.__index = Result
 
 /*
 typedef enum ResultType
@@ -21,19 +22,22 @@ typedef enum ResultType
 } ResultType;
 */
 local RESULT_TYPE = {
-	GATING = "Gating",
-	SCAN = "Scan",
-	JOIN = "Join",
-	UPPER = "Upper",
-	MINMAX = "MinMax",
-	NULL = "Null"
+	GATING = 0,
+	SCAN = 1,
+	JOIN = 2,
+	UPPER = 3,
+	MINMAX = 4,
+	NULL = 5
 }
-function Return.new(tbl)
-	local self = setmetatable({},Return)
-	self.Plan = tbl.plan or nil
+function Result.new(tbl)
+	local self = setmetatable({},Result)
+	assert(tbl ~= nil)
+	assert(tbl.plan~=nil)
+	assert(getmetatable(tbl.plan) == Plan)
+	self.plan = tbl.plan
 	self.result_type = RESULT_TYPE[tbl.result_type or "NULL"]
 	self.resconstantqual = tbl.resconstantqual or nil
-	self.Relids = tbl.relids or {}
+	self.relids = tbl.relids or {}
 	return self
 end
-return Return
+return Result
